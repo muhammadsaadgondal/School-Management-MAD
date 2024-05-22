@@ -1,79 +1,91 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# School Management System
 
-# Getting Started
+A React Native CLI and Firebase project designed to manage school operations efficiently. This system includes three types of users: Admin, Teacher, and Student, each with specific roles and responsibilities.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## Features
 
-## Step 1: Start the Metro Server
+### Admin
+- **Assign/Remove Classes:** Assign or remove a class for a particular teacher.
+- **Manage Student Accounts:** Create new student accounts or modify existing student records, including fee status.
+- **Assign Timetables:** Set timetables for classes.
+- **Generate Reports:** Generate reports for teachers and students.
+- **Announcements:** Make announcements.
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+### Teacher
+- **Manage Marks:** View, search, insert, update, and delete student marks.
+- **Class Management:** Make changes to their assigned classes.
 
-To start Metro, run the following command from the _root_ of your React Native project:
+### Student
+- **View Marks:** View marks for current year subjects or previous records.
+- **View Fee Status and Timetable:** Access fee status, timetable, and syllabus for their classes.
 
-```bash
-# using npm
-npm start
+## Project Configuration
+- **Primary Color:** Indigo 700
+- **UI Framework:** Material UI
+- **Design Style:** Components with round border radius, minimalistic design
 
-# OR using Yarn
-yarn start
-```
+## Installation
 
-## Step 2: Start your Application
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/yourusername/school-management-mad.git
+    ```
+2. Navigate to the project directory:
+    ```bash
+    cd school-management-mad
+    ```
+3. Install dependencies:
+    ```bash
+    npm install
+    ```
+4. Set up Firebase:
+   - Create a Firebase project in the Firebase Console.
+   - Add a web app to the project.
+   - Copy the Firebase configuration object and replace it in the project.
+   - Enable the necessary Firebase services (Authentication, Firestore, etc.).
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+5. Run the project:
+    ```bash
+    npx react-native run-android
+    # or for iOS
+    npx react-native run-ios
+    ```
 
-### For Android
+## Usage
 
-```bash
-# using npm
-npm run android
+### Admin
+1. **Assign/Remove Classes:**
+   - Navigate to the "Manage Classes" section.
+   - Select a teacher and assign or remove a class.
 
-# OR using Yarn
-yarn android
-```
+2. **Manage Student Accounts:**
+   - Go to the "Student Management" section.
+   - Create a new student account or modify existing records.
 
-### For iOS
+3. **Assign Timetables:**
+   - Visit the "Timetable" section.
+   - Assign timetables for various classes.
 
-```bash
-# using npm
-npm run ios
+4. **Generate Reports:**
+   - Access the "Reports" section.
+   - Generate and view reports for teachers and students.
 
-# OR using Yarn
-yarn ios
-```
+5. **Make Announcements:**
+   - Use the "Announcements" section to make school-wide announcements.
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+### Teacher
+1. **Manage Marks:**
+   - Go to the "Marks Management" section.
+   - View, search, insert, update, or delete student marks.
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+2. **Class Management:**
+   - Navigate to the "Class Management" section.
+   - Perform changes to assigned classes.
 
-## Step 3: Modifying your App
+### Student
+1. **View Marks:**
+   - Access the "Marks" section to view current year or previous records.
 
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+2. **View Fee Status and Timetable:**
+   - Go to the "Fee Status" section to check fee details.
+   - Visit the "Timetable" section to view class schedules and syllabus.
