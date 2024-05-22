@@ -21,7 +21,7 @@ A React Native CLI and Firebase project designed to manage school operations eff
 
 ## Project Configuration
 - **Primary Color:** Indigo 700
-- **UI Framework:** Material UI
+- **UI Framework:** React native paper and Tailwind React Native Classnames
 - **Design Style:** Components with round border radius, minimalistic design
 
 ## Installation
