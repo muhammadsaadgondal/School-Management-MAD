@@ -12,6 +12,7 @@ import {
 import InfoCard from './src/Components/InfoCard';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ManageClasses from './src/Screens/ManageClasses';
+import ClassDetail from './src/Screens/ClassDetail';
 
 
 const App = () => {
@@ -22,7 +23,7 @@ const App = () => {
       <SafeAreaView>
 
        
-        <ManageClasses />
+        <ClassDetail />
       </SafeAreaView>
     </SafeAreaProvider>
   );

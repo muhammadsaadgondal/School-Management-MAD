@@ -1,43 +1,65 @@
-package com.schoolmanagement
+package com.schoolmanagement;
 
-import android.app.Application
-import com.facebook.react.PackageList
-import com.facebook.react.ReactApplication
-import com.facebook.react.ReactHost
-import com.facebook.react.ReactNativeHost
-import com.facebook.react.ReactPackage
-import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
-import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
-import com.facebook.react.defaults.DefaultReactNativeHost
-import com.facebook.soloader.SoLoader
+import android.app.Application;
+import com.facebook.react.PackageList;
+import com.facebook.react.ReactApplication;
+import com.facebook.react.ReactHost;
+import com.facebook.react.ReactNativeHost;
+import com.facebook.react.ReactPackage;
+import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
+import com.facebook.react.defaults.DefaultReactHost;
+import com.facebook.react.defaults.DefaultReactNativeHost;
+import com.facebook.soloader.SoLoader;
+import com.imagepicker.ImagePickerPackage; // Import the ImagePickerPackage
 
-class MainApplication : Application(), ReactApplication {
+import java.util.List;
 
-  override val reactNativeHost: ReactNativeHost =
-      object : DefaultReactNativeHost(this) {
-        override fun getPackages(): List<ReactPackage> =
-            PackageList(this).packages.apply {
-              // Packages that cannot be autolinked yet can be added manually here, for example:
-              // add(MyReactNativePackage())
-            }
+public class MainApplication extends Application implements ReactApplication {
 
-        override fun getJSMainModuleName(): String = "index"
-
-        override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
-
-        override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
-        override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
+  @Override
+  public ReactNativeHost getReactNativeHost() {
+    return new DefaultReactNativeHost(this) {
+      @Override
+      protected List<ReactPackage> getPackages() {
+        List<ReactPackage> packages = new PackageList(this).getPackages();
+        packages.add(new ImagePickerPackage()); // Add ImagePickerPackage
+        return packages;
       }
 
-  override val reactHost: ReactHost
-    get() = getDefaultReactHost(applicationContext, reactNativeHost)
+      @Override
+      protected String getJSMainModuleName() {
+        return "index";
+      }
 
-  override fun onCreate() {
-    super.onCreate()
-    SoLoader.init(this, false)
+      @Override
+      protected boolean getUseDeveloperSupport() {
+        return BuildConfig.DEBUG;
+      }
+
+      @Override
+      protected boolean getIsNewArchEnabled() {
+        return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
+      }
+
+      @Override
+      protected boolean getIsHermesEnabled() {
+        return BuildConfig.IS_HERMES_ENABLED;
+      }
+    };
+  }
+
+  @Override
+  public ReactHost getReactHost() {
+    return DefaultReactHost.getOrCreate(getReactNativeHost());
+  }
+
+  @Override
+  public void onCreate() {
+    super.onCreate();
+    SoLoader.init(this, false);
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
-      load()
+      DefaultNewArchitectureEntryPoint.load();
     }
   }
 }
