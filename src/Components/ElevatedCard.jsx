@@ -29,26 +29,26 @@ const announcements = [
 export default function ElevatedCards() {
     return (
         <View>
-            <ScrollView horizontal={true} style={tw`p-4 `}>{
-                announcements.map((announcement, index) => (
-                    <View key={index} style={[styles.card, styles.cardElevated,tw`text-center`] }>
-                         <IconButton
+            <ScrollView horizontal={true} style={tw`p-4`}>
+                {announcements.map((announcement, index) => (
+                    <View key={index} style={tw`relative flex-1 items-center justify-center w-40 h-60 bg-indigo-500 rounded-lg m-2 shadow-lg`}>
+                        <IconButton
                             icon="progress-pencil"
                             size={20}
-                            iconColor='gray'
+                            iconColor='white'
                             style={tw`absolute top--2 left--2  `} // Apply Tailwind positioning
                             onPress={() => console.log('Icon pressed')}
                         />
                        <IconButton
                             icon="close-circle"
                             size={20}
-                            iconColor='gray'
+                            iconColor='white'
                             style={tw`absolute top--2 right--2  `} // Apply Tailwind positioning
                             onPress={() => console.log('Icon pressed')}
                         />
-                        <Text style={tw`text-center`}> {announcement.date} </Text>
-                        <Text style={tw`text-lg font-bold p-1 text-center`}>{announcement.title}</Text>
-                        <Text style={tw`text-center`}>{announcement.content}</Text>
+                        <Text style={tw`text-white `}>{announcement.date}</Text>
+                        <Text style={tw`text-white text-lg font-bold p-1`}>{announcement.title}</Text>
+                        <Text style={tw`text-white  text-center`}>{announcement.content}</Text>
                     </View>
                 )
 
@@ -59,34 +59,10 @@ export default function ElevatedCards() {
         </View>
     )
 }
-
 const styles = StyleSheet.create({
     headingText: {
         fontSize: 24,
         fontWeight: 'bold',
         paddingHorizontal: 8
-    },
-
-    card: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: 150,
-        minHeight: 250,
-        borderRadius: 4,
-        margin: 8,
-
-    },
-    cardElevated: {
-        backgroundColor: '#CAD5E2',
-        elevation: 4,
-        shadowOffset: {
-            width: 1,
-            height: 1
-        },
-        shadowColor: '#333',
-        shadowOpacity: 0.4,
-        shadowRadius: 2
-
     }
-})
+});
