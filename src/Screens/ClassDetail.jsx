@@ -3,7 +3,7 @@ import { View, Text, Image, ScrollView, TouchableOpacity, Button } from 'react-n
 import { IconButton, Avatar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import tw from 'twrnc';
-import * as ImagePicker from 'expo-image-picker';
+// import * as ImagePicker from 'expo-image-picker';
 
 const detail = {
     c_id: 1,
