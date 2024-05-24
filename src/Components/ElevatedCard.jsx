@@ -29,7 +29,7 @@ const announcements = [
 export default function ElevatedCards() {
     return (
         <View>
-            <ScrollView horizontal={true} style={tw`p-4`}>
+            <ScrollView horizontal={true} style={tw`p-4 mb-15`}>
                 {announcements.map((announcement, index) => (
                     <View key={index} style={tw`relative flex-1 items-center justify-center w-40 h-60 bg-indigo-500 rounded-lg m-2 shadow-lg`}>
                         <IconButton
@@ -39,7 +39,7 @@ export default function ElevatedCards() {
                             style={tw`absolute top--2 left--2  `} // Apply Tailwind positioning
                             onPress={() => console.log('Icon pressed')}
                         />
-                       <IconButton
+                        <IconButton
                             icon="close-circle"
                             size={20}
                             iconColor='white'
@@ -53,7 +53,7 @@ export default function ElevatedCards() {
                 )
 
                 )
-            }
+                }
 
             </ScrollView>
         </View>

@@ -23,8 +23,8 @@ const App = () => {
       <SafeAreaView>
 
        
-        <ClassDetail />
-        {/* <ManageClasses /> */}
+        {/* <ClassDetail /> */}
+        <ManageClasses />
       </SafeAreaView>
     </SafeAreaProvider>
   );
