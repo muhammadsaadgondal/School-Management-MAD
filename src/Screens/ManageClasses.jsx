@@ -31,7 +31,7 @@ const ManageClasses = () => {
                 <Icon source='plus-box' size={25} color={tw.color('indigo-700')} />
             </View>
             <InfoCard />
-            
+
             <View style={tw`p-4 mt-2 ml-4 mr-4 flex-row justify-between items-center `}>
                 <Text style={tw`text-xl font-bold`}>Announcements</Text>
                 <Icon
