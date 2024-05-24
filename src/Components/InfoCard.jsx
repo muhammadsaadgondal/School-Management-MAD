@@ -3,81 +3,8 @@ import { Button, Icon, IconButton, Text } from "react-native-paper";
 import tw from 'twrnc';
 
 
-const data = [
-    {
-        c_id: 1,
-        grade: "10",
-        subjects: ["Math", "Science", "English"],
-        students: [
-            { id: 1, name: "John" },
-            { id: 2, name: "Alice" },
-            { id: 3, name: "Bob" }
-        ],
-        teacher: { id: 101, name: "Mr. Smith" }
-    }, {
-        c_id: 3,
-        grade: "4",
-        subjects: ["Math", "Science", "English"],
-        students: [
-            { id: 1, name: "John" },
-            { id: 2, name: "Alice" },
-            { id: 2, name: "Alice" },
-            { id: 3, name: "Bob" },
-            { id: 3, name: "Bob" }
-        ],
-        teacher: { id: 101, name: "Mr. Smith" }
-    },
-    {
-        c_id: 2,
-        grade: "11",
-        subjects: ["Physics", "Chemistry", "Biology"],
-        students: [
-            { id: 4, name: "Emily" },
-            { id: 5, name: "David" },
-            { id: 6, name: "Sophia" }
-        ],
-        teacher: { id: 102, name: "Ms. Johnson" }
-    }, {
-        c_id: 1,
-        grade: "10",
-        subjects: ["Math", "Science", "English"],
-        students: [
-            { id: 1, name: "John" },
-            { id: 2, name: "Alice" },
-            { id: 3, name: "Bob" }
-        ],
-        teacher: { id: 101, name: "Mr. Smith" }
-    }, {
-        c_id: 3,
-        grade: "4",
-        subjects: ["Math", "Science", "English"],
-        students: [
-            { id: 1, name: "John" },
-            { id: 2, name: "Alice" },
-            { id: 2, name: "Alice" },
-            { id: 3, name: "Bob" },
-            { id: 3, name: "Bob" }
-        ],
-        teacher: { id: 101, name: "Mr. Smith" }
-    },
-    {
-        c_id: 2,
-        grade: "11",
-        subjects: ["Physics", "Chemistry", "Biology"],
-        students: [
-            { id: 4, name: "Emily" },
-            { id: 5, name: "David" },
-            { id: 6, name: "Sophia" }
-        ],
-        teacher: { id: 102, name: "Ms. Johnson" }
-    }
-];
 
-
-const InfoCard = () => {
-
-
-
+const InfoCard = ({data}) => {
 
     return (
 
