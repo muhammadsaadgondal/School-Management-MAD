@@ -11,31 +11,26 @@ import FancyTable from 'react-native-fancy-table';
 
 
 
-const detail = {
-    c_id: 1,
-    grade: "10",
-    subjects: ["Math", "Science", "English", "Physics", "Chemistry", "Biology"],
-    students: [
-        { id: 1, name: "John Cena", age: 15, reg_no: "101", attendance: "85%", gender: "male" },
-        { id: 2, name: "Muhammad Saad Gondal", age: 16, reg_no: "102", attendance: "90%", gender: "male" },
-        { id: 3, name: "Bob", age: 15, reg_no: "103", attendance: "88%", gender: "male" },
-        { id: 4, name: "Charlie", age: 16, reg_no: "104", attendance: "92%", gender: "female" },
-        { id: 5, name: "David", age: 15, reg_no: "105", attendance: "80%", gender: "female" },
-    ],
-    teacher: { id: 101, name: "Mr. Smith" }
-};
-const maleCount = detail.students.filter(student => student.gender === 'male').length;
-const femaleCount = detail.students.filter(student => student.gender === 'female').length;
 
-const data = [
-    { value: maleCount, label: 'Male', color: '#2E86C1' },
-    { value: femaleCount, label: 'Female', color: '#F1948A' },
-];
+
 
 
 const header = ["Name", "Age", "Reg No", "Attendance"];
 
-const ClassDetail = () => {
+const ClassDetail = ({ route }) => {
+    const { classInfo, navigation } = route.params;
+    const [detail, setDetail] = useState(classInfo);
+
+    // console.log(detail);
+    // console.log("===========================");
+    const maleCount = detail.students.filter(student => student.gender === 'male').length;
+    const femaleCount = detail.students.filter(student => student.gender === 'female').length;
+
+    const data = [
+        { value: maleCount, label: 'Male', color: '#2E86C1' },
+        { value: femaleCount, label: 'Female', color: '#F1948A' },
+    ];
+
     const [isVisible, setVisible] = useState(false);
     const [syllabusImage, setSyllabusImage] = useState(null);
     const [visibleP, setVisibleP] = useState(false);
@@ -219,7 +214,7 @@ const ClassDetail = () => {
                     <View style={tw`relative bottom-0 left-0 right-0 p-4`}>
                         <TouchableOpacity
                             style={tw`bg-indigo-600 p-3 rounded-lg w-full`}
-                            onPress={() => console.log('Manage Class Pressed')}
+                            onPress={() => navigation.navigate('RegisterScreen', { classInfo,navigation })}
                         >
                             <Text style={tw`text-white text-center`}>Manage Classroom</Text>
                         </TouchableOpacity>

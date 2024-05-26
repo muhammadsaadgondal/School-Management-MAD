@@ -23,28 +23,32 @@ const teachingSubjects = [
   { label: 'Chemistry', value: 'Chemistry' },
   { label: 'Physics', value: 'Physics' },
 ];
+const studentsData = [
+  { id: 1, name: "John Cena", age: 15, reg_no: "101", attendance: "85%", gender: "male" },
+  { id: 2, name: "Muhammad Saad Gondal", age: 16, reg_no: "102", attendance: "90%", gender: "male" },
+  { id: 3, name: "Bob", age: 15, reg_no: "103", attendance: "88%", gender: "male" },
+  { id: 4, name: "Charlie", age: 16, reg_no: "104", attendance: "92%", gender: "female" },
+  { id: 5, name: "David", age: 15, reg_no: "105", attendance: "80%", gender: "female" }
+];
 
-const RegisterScreen = (props) => {
-  const [grade, setGrade] = useState(null);
-  const [teacherName, setTeacherName] = useState(null);
-  const [selectedSubjects, setSelectedSubjects] = useState([]);
+const RegisterScreen = ({ route }) => {
+  const { classInfo, navigation } = route.params;
 
+  const initialGrade = classInfo?.grade || '';
+  const initialTeacherName = classInfo?.teacher?.name || '';
+  const initialSubjects = classInfo?.subjects || [];
+  const initialSelectedStudents = classInfo?.students?.map((student) => student.id) || [];
+
+  const [grade, setGrade] = useState(initialGrade);
+  const [teacherName, setTeacherName] = useState(initialTeacherName);
+  const [selectedSubjects, setSelectedSubjects] = useState(initialSubjects);
+  const [selectedStudents, setSelectedStudents] = useState(initialSelectedStudents);
+  const [subjects, setSubjects] = useState(initialSubjects);
   const [searchQuery, setSearchQuery] = useState('');
 
   const [gradeOpen, setGradeOpen] = useState(false);
   const [teacherOpen, setTeacherOpen] = useState(false);
   const [subjectOpen, setSubjectOpen] = useState(false);
-
-  const [students, setStudents] = useState([
-    { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Smith' },
-    { id: 3, name: 'Michael Johnson' },
-    { id: 4, name: 'Jane Smith' },
-    { id: 5, name: 'Michael Johnson' },
-    // Add more students here
-  ]);
-  const [selectedStudents, setSelectedStudents] = useState([]);
-  const [subjects, setSubjects] = useState([]);
 
   const handleAddSubject = () => {
     setSubjects([...selectedSubjects]);
@@ -62,7 +66,7 @@ const RegisterScreen = (props) => {
     });
   };
 
-  const filteredStudents = students.filter((student) =>
+  const filteredStudents = studentsData.filter((student) =>
     student.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -70,10 +74,11 @@ const RegisterScreen = (props) => {
     <View style={tw`flex-1 bg-blue-800 justify-center`}>
       <ScrollView
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={tw`flex-grow justify-center items-center px-4`}>
-
-        {/* Fields for Grade and Teacher Name */}
-        <Text style={tw`text-2xl text-white font-bold  p-8`}>Register Class</Text>
+        contentContainerStyle={tw`flex-grow justify-center items-center px-4`}
+      >
+        <Text style={tw`text-2xl text-white font-bold p-4`}>
+          {classInfo == undefined ? 'Register Class' : 'Update Class Info'}
+        </Text>
         <DropDownPicker
           open={gradeOpen}
           value={grade}
@@ -89,28 +94,26 @@ const RegisterScreen = (props) => {
           ]}
           setOpen={setGradeOpen}
           setValue={setGrade}
-          containerStyle={tw`h-12 mb-5 w-full`}
+          containerStyle={tw`h-10 mb-5 w-full`}
           style={tw`bg-white`}
           dropDownContainerStyle={tw`bg-white`}
           placeholder="Select Grade"
           zIndex={3000}
           zIndexInverse={1000}
         />
-
         <DropDownPicker
           open={teacherOpen}
           value={teacherName}
           items={teachers}
           setOpen={setTeacherOpen}
           setValue={setTeacherName}
-          containerStyle={tw`h-12 mb-5 w-full`}
+          containerStyle={tw`h-10 mb-5 w-full`}
           style={tw`bg-white`}
           dropDownContainerStyle={tw`bg-white`}
           placeholder="Select Teacher"
           zIndex={2000}
           zIndexInverse={2000}
         />
-
         <View style={tw`flex-row relative`}>
           <DropDownPicker
             open={subjectOpen}
@@ -125,8 +128,8 @@ const RegisterScreen = (props) => {
             multiple={true}
             zIndex={1000}
             zIndexInverse={3000}
-            min={0} // Minimum number of items that can be selected
-            max={teachingSubjects.length} // Maximum number of items that can be selected (optional)
+            min={0}
+            max={teachingSubjects.length}
             onChangeItem={(items) => setSelectedSubjects(items.map(item => item.value))}
             renderBadge={(item) => (
               <Checkbox
@@ -147,7 +150,6 @@ const RegisterScreen = (props) => {
           </TouchableOpacity>
         </View>
 
-        {/* Dynamic list of subjects */}
         <View style={tw`bg-white m-4 p-4 rounded-lg shadow-lg mb-4 w-full relative z-0`}>
           <Text style={tw`text-xl font-bold mb-2`}>Subjects</Text>
           {chunkArray(subjects, 3).map((rowSubjects, rowIndex) => (
@@ -164,7 +166,6 @@ const RegisterScreen = (props) => {
           ))}
         </View>
 
-        {/* Search Bar for Students */}
         <Searchbar
           placeholder="Search for Students"
           onChangeText={onChangeSearch}
@@ -174,9 +175,9 @@ const RegisterScreen = (props) => {
 
         <View style={tw`bg-white m-4 p-4 rounded-lg shadow-lg mb-4 w-full max-h-50`}>
           <Text style={tw`text-xl font-bold mb-2`}>Students</Text>
-          <ScrollView  contentContainerStyle={tw`p-1`}>
+          <ScrollView style={tw`flex: 1`}>
             {filteredStudents.map((student) => (
-              <View key={student.id} style={tw`bg-indigo-100 rounded-lg shadow-lg mb-2`}>
+              <View key={student.id} style={tw`bg-indigo-100 rounded-lg shadow-lg mb-4`}>
                 <View style={tw`flex-row items-center`}>
                   <Checkbox
                     status={selectedStudents.includes(student.id) ? 'checked' : 'unchecked'}
@@ -184,7 +185,7 @@ const RegisterScreen = (props) => {
                     style={tw`mr-2`}
                   />
                   <Avatar.Image
-                    size={35} // Adjust the size as needed
+                    size={35}
                     source={{ uri: 'https://via.placeholder.com/150' }}
                     style={tw`mr-2`}
                   />
@@ -194,17 +195,20 @@ const RegisterScreen = (props) => {
                   <IconButton
                     icon="information"
                     color={tw.color('indigo-700')}
-                    size={20} // Adjust the size as needed
+                    size={20}
                     onPress={() => console.log('Info Pressed')}
                   />
                 </View>
               </View>
             ))}
+            {filteredStudents.length === 0 && (
+              <Text style={tw`text-center text-gray-500`}>No students found.</Text>
+            )}
           </ScrollView>
         </View>
 
-        <TouchableOpacity style={tw`bg-green-500 p-3 rounded-lg w-full mt-5 mb-10`} onPress={() => console.log('Register Button Pressed')}>
-          <Text style={tw`text-white text-center`}>Register</Text>
+        <TouchableOpacity style={tw`bg-green-500 p-3 rounded-lg w-full mt-1`} onPress={() => console.log('Register Button Pressed')}>
+          <Text style={tw`text-white text-center`}>{classInfo == undefined ? 'Create' : 'Update'}</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>

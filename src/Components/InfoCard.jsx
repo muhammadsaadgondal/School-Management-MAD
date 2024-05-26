@@ -1,19 +1,23 @@
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Button, Icon, IconButton, Text } from "react-native-paper";
 import tw from 'twrnc';
+import ClassDetail from "../Screens/ClassDetail";
 
 
 
-const InfoCard = ({data}) => {
+const InfoCard = ({data, navigation }) => {
 
+    console.log(data);
+    console.log("=====================================");
     return (
 
+        
         data.map((classInfo, index) => (
             <TouchableOpacity
                 key={index}
                 style={tw`mt-2 mb-2 ml-4 mr-4 pt-2 pb-2  bg-indigo-700 rounded-lg `}
                  // Adding delayPressIn
-                onPress={() => console.log("Pressed")}
+                onPress={() => navigation.navigate('ClassDetail', { classInfo,navigation })}
             >
                 <IconButton
                             icon="progress-pencil"
