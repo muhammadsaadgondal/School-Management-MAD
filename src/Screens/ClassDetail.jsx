@@ -76,7 +76,7 @@ const ClassDetail = ({ route }) => {
                                 icon="information"
                                 color={tw.color('indigo-700')}
                                 size={25}
-                                onPress={() => console.log('Info Pressed')}
+                                onPress={() => navigation.navigate('Profile', { profileData: detail.teacher, profileType: 'teacher',gradeTeaching:detail.grade })}
                             />
                         </View>
                     </View>
@@ -216,7 +216,7 @@ const ClassDetail = ({ route }) => {
                             style={tw`bg-indigo-600 p-3 rounded-lg w-full`}
                             onPress={() => navigation.navigate('RegisterScreen', { classInfo,navigation })}
                         >
-                            <Text style={tw`text-white text-center`}>Manage Classroom</Text>
+                            <Text style={tw`text-white text-center`}>Update Classroom</Text>
                         </TouchableOpacity>
                     </View>
 
