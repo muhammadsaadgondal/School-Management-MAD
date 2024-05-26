@@ -4,23 +4,35 @@ import { IconButton, Avatar, Portal, Modal, Provider as PaperProvider, Icon } fr
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ImagePickerModal from "react-native-image-picker-modal";
 import tw from 'twrnc';
+import { PieChart } from 'react-native-gifted-charts';
 
 import { TalecTable } from "talec-table";
 import FancyTable from 'react-native-fancy-table';
+
+
 
 const detail = {
     c_id: 1,
     grade: "10",
     subjects: ["Math", "Science", "English", "Physics", "Chemistry", "Biology"],
     students: [
-        { id: 1, name: "John Cena", age: 15, reg_no: "101", attendance: "85%" },
-        { id: 2, name: "Muhammad Saad Gondal", age: 16, reg_no: "102", attendance: "90%" },
-        { id: 3, name: "Bob", age: 15, reg_no: "103", attendance: "88%" },
-        { id: 4, name: "Charlie", age: 16, reg_no: "104", attendance: "92%" },
-        { id: 5, name: "David", age: 15, reg_no: "105", attendance: "80%" },
+        { id: 1, name: "John Cena", age: 15, reg_no: "101", attendance: "85%", gender: "male" },
+        { id: 2, name: "Muhammad Saad Gondal", age: 16, reg_no: "102", attendance: "90%", gender: "male" },
+        { id: 3, name: "Bob", age: 15, reg_no: "103", attendance: "88%", gender: "male" },
+        { id: 4, name: "Charlie", age: 16, reg_no: "104", attendance: "92%", gender: "female" },
+        { id: 5, name: "David", age: 15, reg_no: "105", attendance: "80%", gender: "female" },
     ],
     teacher: { id: 101, name: "Mr. Smith" }
 };
+const maleCount = detail.students.filter(student => student.gender === 'male').length;
+const femaleCount = detail.students.filter(student => student.gender === 'female').length;
+
+const data = [
+    { value: maleCount, label: 'Male', color: '#2E86C1' },
+    { value: femaleCount, label: 'Female', color: '#F1948A' },
+];
+
+
 const header = ["Name", "Age", "Reg No", "Attendance"];
 
 const ClassDetail = () => {
@@ -73,6 +85,30 @@ const ClassDetail = () => {
                             />
                         </View>
                     </View>
+                    {/* Gender Ratio Chart */}
+                    <View style={tw`bg-white p-4 rounded-lg shadow-lg mb-4 items-center`}>
+                        <Text style={tw`text-xl font-bold mb-2`}>Gender Ratio</Text>
+                        <PieChart
+                            data={data.map((item) => ({
+                                ...item,
+                                text: `${item.label}: ${item.value}`,
+                                textColor: 'black',
+                                showText: true,
+                                textSize: 12,
+                            }))}
+                            donut
+                            innerRadius={50}
+                            centerLabelComponent={() => {
+                                return (
+                                    <Text style={tw`font-bold `}>
+                                        Male: {maleCount} {'\n'}
+                                        Female: {femaleCount}
+                                    </Text>
+                                );
+                            }}
+                        />
+                    </View>
+
 
                     {/* Students Section */}
                     <View style={tw`bg-white p-4 rounded-lg shadow-lg mb-4`}>
