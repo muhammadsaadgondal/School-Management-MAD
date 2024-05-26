@@ -8,6 +8,8 @@ import { BottomNavigation, IconButton } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import tw from 'twrnc';
 import RegisterScreen from './src/Screens/RegisterScreen';
+import AnnouncementScreen from './src/Screens/AnnouncementScreen';
+import ClassNavigation from './src/navigators/ClassNavigation';
 
 const Tab = createBottomTabNavigator();
 
@@ -23,23 +25,8 @@ const App = () => {
 
       >
         <Tab.Screen
-          name="RegisterScreen"
-          component={RegisterScreen}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <IconButton
-                style={tw`bg-${focused ? 'red-300' : 'white'}`}
-                icon="view-dashboard"
-                size={20}
-                iconColor='red' // Change icon color based on focus
-
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="ManageClasses"
-          component={ManageClasses}
+          name="ClassNavigation"
+          component={ClassNavigation}
           options={{
             tabBarIcon: ({ focused }) => (
               <IconButton
@@ -51,7 +38,22 @@ const App = () => {
             ),
           }}
         />
-        <Tab.Screen
+        {/* <Tab.Screen
+          name="AnnouncementScreen"
+          component={AnnouncementScreen}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <IconButton
+                style={tw`bg-${focused ? 'red-300' : 'white'}`}
+                icon="view-dashboard"
+                size={20}
+                iconColor='red' // Change icon color based on focus
+
+              />
+            ),
+          }}
+        /> */}
+        {/* <Tab.Screen
           name="ClassDetail"
           component={ClassDetail}
           options={{
@@ -64,7 +66,7 @@ const App = () => {
               />
             ),
           }}
-        />
+        /> */}
       </Tab.Navigator>
     </NavigationContainer>
   );
