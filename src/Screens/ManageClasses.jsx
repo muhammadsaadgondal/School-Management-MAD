@@ -21,7 +21,7 @@ const listedClasses = [
             { id: 4, name: "Charlie", age: 16, reg_no: "104", attendance: "92%", gender: "female" },
             { id: 5, name: "David", age: 15, reg_no: "105", attendance: "80%", gender: "female" }
         ],
-        teacher: { id: 101, name: "Mr. Smith" }
+        teacher: { id: 101, name: "Mr. Smith", email: "temp@gmail.com",experience: 5 }
     },
     {
         c_id: 3,
@@ -34,7 +34,7 @@ const listedClasses = [
             { id: 4, name: "Charlie", age: 16, reg_no: "104", attendance: "92%", gender: "female" },
             { id: 5, name: "David", age: 15, reg_no: "105", attendance: "80%", gender: "female" }
         ],
-        teacher: { id: 101, name: "Mr. Smith" }
+        teacher: { id: 101, name: "Mr. Smith" , email: "temp@gmail.com",experience: 5}
     },
     {
         c_id: 2,
@@ -47,7 +47,7 @@ const listedClasses = [
             { id: 4, name: "Charlie", age: 16, reg_no: "104", attendance: "92%", gender: "female" },
             { id: 5, name: "David", age: 15, reg_no: "105", attendance: "80%", gender: "female" }
         ],
-        teacher: { id: 102, name: "Ms. Johnson" }
+        teacher: { id: 102, name: "Ms. Johnson", email: "temp@gmail.com", experience: 5  }
     },
     {
         c_id: 1,
@@ -60,7 +60,7 @@ const listedClasses = [
             { id: 4, name: "Charlie", age: 16, reg_no: "104", attendance: "92%", gender: "female" },
             { id: 5, name: "David", age: 15, reg_no: "105", attendance: "80%", gender: "female" }
         ],
-        teacher: { id: 101, name: "Mr. Smith" }
+        teacher: { id: 101, name: "Mr. Smith", email: "temp@gmail.com", experience: 5 }
     },
     {
         c_id: 3,
@@ -73,7 +73,7 @@ const listedClasses = [
             { id: 4, name: "Charlie", age: 16, reg_no: "104", attendance: "92%", gender: "female" },
             { id: 5, name: "David", age: 15, reg_no: "105", attendance: "80%", gender: "female" }
         ],
-        teacher: { id: 101, name: "Mr. Smith" }
+        teacher: { id: 101, name: "Mr. Smith", email: "temp@gmail.com", experience: 5  }
     },
     {
         c_id: 2,
@@ -86,7 +86,7 @@ const listedClasses = [
             { id: 4, name: "Charlie", age: 16, reg_no: "104", attendance: "92%", gender: "female" },
             { id: 5, name: "David", age: 15, reg_no: "105", attendance: "80%", gender: "female" }
         ],
-        teacher: { id: 102, name: "Ms. Johnson" }
+        teacher: { id: 102, name: "Ms. Johnson", email: "temp@gmail.com", experience: 5  }
     }
 ];
 
@@ -122,7 +122,7 @@ const ManageClasses = ({ navigation }) => {
             />
             <View style={tw`flex-row justify-between p-4  ml-4 mr-4`}>
                 <Text style={tw`text-xl font-bold`}>Listed Classes</Text>
-                <IconButton icon='plus-box' size={25} iconColor={tw.color('indigo-700')}  onPress={navigation.navigate("RegisterScreen",{navigation}) } />
+                <IconButton icon='plus-box' size={25} iconColor={tw.color('indigo-700')} onPress={navigation.navigate("RegisterScreen", { navigation })} />
             </View>
             <InfoCard data={filteredClasses} navigation={navigation} />
 
@@ -132,12 +132,12 @@ const ManageClasses = ({ navigation }) => {
                     icon="plus-box"
                     iconColor={tw.color('indigo-700')}
                     size={25}
-                    onPress={() => navigation.navigate('AnnouncementScreen',{navigation} )}
+                    onPress={() => navigation.navigate('AnnouncementScreen', { navigation })}
                 />
-                
+
             </View>
-            <ElevatedCards  navigation={navigation} />
-            
+            <ElevatedCards navigation={navigation} />
+
         </ScrollView>
     )
 }

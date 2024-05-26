@@ -196,7 +196,7 @@ const RegisterScreen = ({ route }) => {
                     icon="information"
                     color={tw.color('indigo-700')}
                     size={20}
-                    onPress={() => console.log('Info Pressed')}
+                    onPress={() => navigation.navigate('Profile', { profileData: student, profileType: 'student' })}
                   />
                 </View>
               </View>
