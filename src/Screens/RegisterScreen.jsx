@@ -29,7 +29,6 @@ const RegisterScreen = (props) => {
   const [teacherName, setTeacherName] = useState(null);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
 
-
   const [searchQuery, setSearchQuery] = useState('');
 
   const [gradeOpen, setGradeOpen] = useState(false);
@@ -40,6 +39,8 @@ const RegisterScreen = (props) => {
     { id: 1, name: 'John Doe' },
     { id: 2, name: 'Jane Smith' },
     { id: 3, name: 'Michael Johnson' },
+    { id: 4, name: 'Jane Smith' },
+    { id: 5, name: 'Michael Johnson' },
     // Add more students here
   ]);
   const [selectedStudents, setSelectedStudents] = useState([]);
@@ -69,9 +70,7 @@ const RegisterScreen = (props) => {
     <View style={tw`flex-1 bg-blue-800 justify-center`}>
       <ScrollView
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={tw`flex-grow justify-center items-center px-4 `}>
-
-
+        contentContainerStyle={tw`flex-grow justify-center items-center px-4`}>
 
         {/* Fields for Grade and Teacher Name */}
         <Text style={tw`text-2xl text-white font-bold  p-8`}>Register Class</Text>
@@ -165,48 +164,45 @@ const RegisterScreen = (props) => {
           ))}
         </View>
 
-
-
         {/* Search Bar for Students */}
         <Searchbar
           placeholder="Search for Students"
           onChangeText={onChangeSearch}
           value={searchQuery}
-          style={tw` w-full bg-indigo-100`}
+          style={tw`w-full bg-indigo-100`}
         />
 
-        <View style={tw`bg-white m-4 p-4 rounded-lg shadow-lg mb-4 w-full h-60`}>
+        <View style={tw`bg-white m-4 p-4 rounded-lg shadow-lg mb-4 w-full max-h-50`}>
           <Text style={tw`text-xl font-bold mb-2`}>Students</Text>
-          <View style={tw`max-h-40`}>
-            <ScrollView contentContainerStyle={tw`p-2 `}>
-              {filteredStudents.map((student) => (
-                <View key={student.id} style={tw`bg-indigo-100  rounded-lg shadow-lg mb-4 `}>
-                  <View style={tw`flex-row items-center`}>
-                    <Checkbox
-                      status={selectedStudents.includes(student.id) ? 'checked' : 'unchecked'}
-                      onPress={() => toggleStudentSelection(student.id)}
-                      style={tw`mr-2`}
-                    />
-                    <Avatar.Image
-                      size={35} // Adjust the size as needed
-                      source={{ uri: 'https://via.placeholder.com/150' }}
-                      style={tw`mr-2`}
-                    />
-                    <View style={tw`flex-1`}>
-                      <Text style={tw`text-base font-bold`}>{student.name}</Text>
-                    </View>
-                    <IconButton
-                      icon="information"
-                      color={tw.color('indigo-700')}
-                      size={20} // Adjust the size as needed
-                      onPress={() => console.log('Info Pressed')}
-                    />
+          <ScrollView  contentContainerStyle={tw`p-1`}>
+            {filteredStudents.map((student) => (
+              <View key={student.id} style={tw`bg-indigo-100 rounded-lg shadow-lg mb-2`}>
+                <View style={tw`flex-row items-center`}>
+                  <Checkbox
+                    status={selectedStudents.includes(student.id) ? 'checked' : 'unchecked'}
+                    onPress={() => toggleStudentSelection(student.id)}
+                    style={tw`mr-2`}
+                  />
+                  <Avatar.Image
+                    size={35} // Adjust the size as needed
+                    source={{ uri: 'https://via.placeholder.com/150' }}
+                    style={tw`mr-2`}
+                  />
+                  <View style={tw`flex-1`}>
+                    <Text style={tw`text-base font-bold`}>{student.name}</Text>
                   </View>
+                  <IconButton
+                    icon="information"
+                    color={tw.color('indigo-700')}
+                    size={20} // Adjust the size as needed
+                    onPress={() => console.log('Info Pressed')}
+                  />
                 </View>
-              ))}
-            </ScrollView>
-          </View>
+              </View>
+            ))}
+          </ScrollView>
         </View>
+
         <TouchableOpacity style={tw`bg-green-500 p-3 rounded-lg w-full mt-5 mb-10`} onPress={() => console.log('Register Button Pressed')}>
           <Text style={tw`text-white text-center`}>Register</Text>
         </TouchableOpacity>
