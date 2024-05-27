@@ -1,11 +1,15 @@
 import { Dimensions, View, Text, ScrollView, Touchable, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import InfoCard from '../Components/InfoCard'
-import { Button, Icon, IconButton, MD3Colors, Searchbar } from 'react-native-paper'
+import { ActivityIndicator, Button, Icon, IconButton, MD3Colors, Searchbar } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import tw from 'twrnc';
 import AnnouncementCard from '../Components/AnnouncementCard'
 import ElevatedCards from '../Components/ElevatedCard'
+
+// import { firebase } from '../firebase/config'
+
+import firestore from '@react-native-firebase/firestore';
 
 
 
@@ -21,7 +25,7 @@ const listedClasses = [
             { id: 4, name: "Charlie", age: 16, reg_no: "104", attendance: "92%", gender: "female" },
             { id: 5, name: "David", age: 15, reg_no: "105", attendance: "80%", gender: "female" }
         ],
-        teacher: { id: 101, name: "Mr. Smith", email: "temp@gmail.com",experience: 5 }
+        teacher: { id: 101, name: "Mr. Smith", email: "temp@gmail.com", experience: 5 }
     },
     {
         c_id: 3,
@@ -34,7 +38,7 @@ const listedClasses = [
             { id: 4, name: "Charlie", age: 16, reg_no: "104", attendance: "92%", gender: "female" },
             { id: 5, name: "David", age: 15, reg_no: "105", attendance: "80%", gender: "female" }
         ],
-        teacher: { id: 101, name: "Mr. Smith" , email: "temp@gmail.com",experience: 5}
+        teacher: { id: 101, name: "Mr. Smith", email: "temp@gmail.com", experience: 5 }
     },
     {
         c_id: 2,
@@ -47,7 +51,7 @@ const listedClasses = [
             { id: 4, name: "Charlie", age: 16, reg_no: "104", attendance: "92%", gender: "female" },
             { id: 5, name: "David", age: 15, reg_no: "105", attendance: "80%", gender: "female" }
         ],
-        teacher: { id: 102, name: "Ms. Johnson", email: "temp@gmail.com", experience: 5  }
+        teacher: { id: 102, name: "Ms. Johnson", email: "temp@gmail.com", experience: 5 }
     },
     {
         c_id: 1,
@@ -73,7 +77,7 @@ const listedClasses = [
             { id: 4, name: "Charlie", age: 16, reg_no: "104", attendance: "92%", gender: "female" },
             { id: 5, name: "David", age: 15, reg_no: "105", attendance: "80%", gender: "female" }
         ],
-        teacher: { id: 101, name: "Mr. Smith", email: "temp@gmail.com", experience: 5  }
+        teacher: { id: 101, name: "Mr. Smith", email: "temp@gmail.com", experience: 5 }
     },
     {
         c_id: 2,
@@ -86,13 +90,37 @@ const listedClasses = [
             { id: 4, name: "Charlie", age: 16, reg_no: "104", attendance: "92%", gender: "female" },
             { id: 5, name: "David", age: 15, reg_no: "105", attendance: "80%", gender: "female" }
         ],
-        teacher: { id: 102, name: "Ms. Johnson", email: "temp@gmail.com", experience: 5  }
+        teacher: { id: 102, name: "Ms. Johnson", email: "temp@gmail.com", experience: 5 }
     }
 ];
 
 
 
 const ManageClasses = ({ navigation }) => {
+    // const [loading, setLoading] = useState(true);
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const usersCollection = firestore().collection('Admin');
+                console.log('====================================');
+                console.log(usersCollection);
+                console.log("Here");
+                console.log('====================================');
+            } catch (error) {
+                console.error("Error fetching data: ", error);
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+
+
+
+
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredClasses, setFilteredClasses] = useState(listedClasses);
 
@@ -104,6 +132,7 @@ const ManageClasses = ({ navigation }) => {
         );
         setFilteredClasses(filtered);
     };
+   
     return (
         <ScrollView style={tw`bg-white h-full`}>
             <View style={tw`p-4 mt-4 ml-4 mr-4 flex-row justify-between items-center `}>
@@ -122,7 +151,11 @@ const ManageClasses = ({ navigation }) => {
             />
             <View style={tw`flex-row justify-between p-4  ml-4 mr-4`}>
                 <Text style={tw`text-xl font-bold`}>Listed Classes</Text>
-                <IconButton icon='plus-box' size={25} iconColor={tw.color('indigo-700')} onPress={navigation.navigate("RegisterScreen", { navigation })} />
+                <IconButton
+                    icon='plus-box'
+                    size={25}
+                    iconColor={tw.color('indigo-700')}
+                    onPress={() => navigation.navigate("RegisterScreen", { navigation })} />
             </View>
             <InfoCard data={filteredClasses} navigation={navigation} />
 
