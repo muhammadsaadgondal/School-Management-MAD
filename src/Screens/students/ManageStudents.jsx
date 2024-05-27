@@ -22,6 +22,13 @@ const ManageStudents = () => {
       >
         <Text style={tw`text-white text-center text-lg`}>Add Fee </Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={tw`bg-indigo-700 p-4 rounded mb-4 z-10`}
+        activeOpacity={0.5}
+        onPress={() => navigation.navigate('StudentAgeReport')}
+      >
+        <Text style={tw`text-white text-center text-lg`}>View Report</Text>
+      </TouchableOpacity>
     </View>
   )
 }
