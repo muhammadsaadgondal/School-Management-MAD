@@ -10,6 +10,7 @@ import tw from 'twrnc';
 import RegisterScreen from './src/Screens/RegisterScreen';
 import AnnouncementScreen from './src/Screens/AnnouncementScreen';
 import ClassNavigation from './src/navigators/ClassNavigation';
+import StudentNavigation from './src/navigators/StudentNavigation';
 
 const Tab = createBottomTabNavigator();
 
@@ -27,6 +28,20 @@ const App = () => {
         <Tab.Screen
           name="ClassNavigation"
           component={ClassNavigation}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <IconButton
+                style={tw`bg-${focused ? 'red-300' : 'white'}`}
+                icon="account-supervisor-circle"
+                size={20}
+                iconColor='red'// Change icon color based on focus
+              />
+            ),
+          }}
+        />
+         <Tab.Screen
+          name="StudentNavigation"
+          component={StudentNavigation}
           options={{
             tabBarIcon: ({ focused }) => (
               <IconButton
