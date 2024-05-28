@@ -7,25 +7,25 @@ import StudentAgeReport from "../Screens/students/StudentAgeReport";
 
 
 
-const ClassStack = createStackNavigator();
+const StudentStack = createStackNavigator();
 
 function StudentNavigation() {
   return (
-    <ClassStack.Navigator
+    <StudentStack.Navigator
     screenOptions={{
         headerShown: false, 
     }}
     >
       {/* Students Navigation */}
-      <ClassStack.Screen name="ManageStudents" component={ManageStudents} />
-      <ClassStack.Screen name="AddStudents" component={AddStudents} />
-      <ClassStack.Screen name="AddFee" component={AddFee} />
-      <ClassStack.Screen name="StudentAgeReport" component={StudentAgeReport} />
+      <StudentStack.Screen name="ManageStudents" component={ManageStudents} />
+      <StudentStack.Screen name="AddStudents" component={AddStudents} />
+      <StudentStack.Screen name="AddFee" component={AddFee} />
+      <StudentStack.Screen name="StudentAgeReport" component={StudentAgeReport} />
 
 
       
 
-    </ClassStack.Navigator>
+    </StudentStack.Navigator>
   );
 }
 

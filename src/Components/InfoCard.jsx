@@ -4,34 +4,34 @@ import tw from 'twrnc';
 
 
 
-const InfoCard = ({data, navigation }) => {
+const InfoCard = ({ data, navigation }) => {
 
     console.log(data);
     console.log("=====================================");
     return (
 
-        
+
         data.map((classInfo, index) => (
             <TouchableOpacity
                 key={index}
                 style={tw`mt-2 mb-2 ml-4 mr-4 pt-2 pb-2  bg-indigo-700 rounded-lg `}
-                 // Adding delayPressIn
-                onPress={() => navigation.navigate('ClassDetail', { classInfo,navigation })}
+                // Adding delayPressIn
+                onPress={() => navigation.navigate('ClassDetail', { classInfo, navigation })}
             >
                 <IconButton
-                            icon="progress-pencil"
-                            size={20}
-                            iconColor='white'
-                            style={tw`absolute top--2 right-6  `} // Apply Tailwind positioning
-                            onPress={() => console.log('Icon pressed')}
-                        />
-                       <IconButton
-                            icon="close-circle"
-                            size={20}
-                            iconColor='white'
-                            style={tw`absolute top--2 right--2  `} // Apply Tailwind positioning
-                            onPress={() => console.log('Icon pressed')}
-                        />
+                    icon="progress-pencil"
+                    size={20}
+                    iconColor='white'
+                    style={tw`absolute top--2 right-6  `} // Apply Tailwind positioning
+                    onPress={() => navigation.navigate('RegisterScreen', { classInfo, navigation })}
+                />
+                <IconButton
+                    icon="close-circle"
+                    size={20}
+                    iconColor='white'
+                    style={tw`absolute top--2 right--2  `} // Apply Tailwind positioning
+                    onPress={() => console.log('Icon pressed')}
+                />
                 <View style={tw`flex-row justify-start items-center `}>
 
                     <Icon source="account-box" size={40} color='white' />

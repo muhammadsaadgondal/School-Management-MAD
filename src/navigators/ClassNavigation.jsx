@@ -3,7 +3,7 @@ import ManageClasses from "../Screens/class/ManageClasses";
 import ClassDetail from "../Screens/class/ClassDetail";
 import RegisterScreen from "../Screens/class/RegisterScreen";
 import AnnouncementScreen from "../Screens/class/AnnouncementScreen";
-import AdminDashboard from "../Screens/class/AdminDashboard";
+import AdminDashboard from "../Screens/students/AdminDashboard";
 import ProfileScreen from "../Screens/class/ProfileScreen";
 
 
@@ -19,8 +19,6 @@ function ClassNavigation() {
     }}
     >
       <ClassStack.Screen name="ManageClasses" component={ManageClasses} />
-      
-     
       <ClassStack.Screen name="ClassDetail" component={ClassDetail} />
       <ClassStack.Screen name="RegisterScreen" component={RegisterScreen} />
       <ClassStack.Screen name="AnnouncementScreen" component={AnnouncementScreen} />

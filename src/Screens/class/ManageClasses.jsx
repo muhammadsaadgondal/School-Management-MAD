@@ -7,7 +7,7 @@ import tw from 'twrnc';
 import AnnouncementCard from '../../Components/AnnouncementCard'
 import ElevatedCards from '../../Components/ElevatedCard'
 
-// import { firebase } from '../firebase/config'
+import { firebase } from '../firebase/config'
 
 import firestore from '@react-native-firebase/firestore';
 
@@ -97,7 +97,6 @@ const listedClasses = [
 
 
 const ManageClasses = ({ navigation }) => {
-    // const [loading, setLoading] = useState(true);
     const [data, setData] = useState([]);
 
     useEffect(() => {
