@@ -7,7 +7,6 @@ import tw from 'twrnc';
 import AnnouncementCard from '../../Components/AnnouncementCard'
 import ElevatedCards from '../../Components/ElevatedCard'
 
-import { firebase } from '../firebase/config'
 
 import firestore from '@react-native-firebase/firestore';
 
@@ -102,7 +101,8 @@ const ManageClasses = ({ navigation }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const usersCollection = firestore().collection('Admin');
+                const usersCollection = firestore().collection('Admin').doc('ID').get();
+                
                 console.log('====================================');
                 console.log(usersCollection);
                 console.log("Here");
