@@ -72,3 +72,8 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+#firebase
+
+google-services.json
+school-management-system-3b44a-firebase-adminsdk-gi2vb-1e81d4008a.json
