@@ -1,11 +1,11 @@
 import { Dimensions, View, Text, ScrollView, Touchable, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import InfoCard from '../Components/InfoCard'
+import InfoCard from '../../Components/InfoCard'
 import { ActivityIndicator, Button, Icon, IconButton, MD3Colors, Searchbar } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import tw from 'twrnc';
-import AnnouncementCard from '../Components/AnnouncementCard'
-import ElevatedCards from '../Components/ElevatedCard'
+import AnnouncementCard from '../../Components/AnnouncementCard'
+import ElevatedCards from '../../Components/ElevatedCard'
 
 // import { firebase } from '../firebase/config'
 
