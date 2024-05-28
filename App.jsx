@@ -5,6 +5,7 @@ import tw from 'twrnc';
 import ClassNavigation from './src/navigators/ClassNavigation';
 import { IconButton } from 'react-native-paper';
 import StudentNavigation from './src/navigators/StudentNavigation';
+import DashboardNavigation from './src/navigators/DashboardNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -36,6 +37,20 @@ const App = () => {
         <Tab.Screen
           name="StudentNavigation"
           component={StudentNavigation}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <IconButton
+                style={tw`bg-${focused ? 'red-300' : 'white'}`}
+                icon="account-supervisor-circle"
+                size={20}
+                iconColor='red'// Change icon color based on focus
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="DashboardNaviagation"
+          component={DashboardNavigation }
           options={{
             tabBarIcon: ({ focused }) => (
               <IconButton
