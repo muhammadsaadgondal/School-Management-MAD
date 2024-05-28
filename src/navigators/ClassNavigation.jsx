@@ -1,9 +1,10 @@
 import { createStackNavigator } from "@react-navigation/stack";
-import ManageClasses from "../Screens/ManageClasses";
-import ClassDetail from "../Screens/ClassDetail";
-import RegisterScreen from "../Screens/RegisterScreen";
-import AnnouncementScreen from "../Screens/AnnouncementScreen";
-import AdminDashboard from "../Screens/AdminDashboard";
+import ManageClasses from "../Screens/class/ManageClasses";
+import ClassDetail from "../Screens/class/ClassDetail";
+import RegisterScreen from "../Screens/class/RegisterScreen";
+import AnnouncementScreen from "../Screens/class/AnnouncementScreen";
+import AdminDashboard from "../Screens/class/AdminDashboard";
+import ProfileScreen from "../Screens/class/ProfileScreen";
 
 
 
@@ -17,7 +18,6 @@ function ClassNavigation() {
         headerShown: false, 
     }}
     >
-      <ClassStack.Screen name="AdminDashboard" component={AdminDashboard} />
       <ClassStack.Screen name="ManageClasses" component={ManageClasses} />
       
      

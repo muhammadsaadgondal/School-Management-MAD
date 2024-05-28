@@ -1,7 +1,6 @@
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Button, Icon, IconButton, Text } from "react-native-paper";
 import tw from 'twrnc';
-import ClassDetail from "../Screens/ClassDetail";
 
 
 

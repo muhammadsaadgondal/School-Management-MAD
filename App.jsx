@@ -1,15 +1,9 @@
 import React from 'react';
-import ManageClasses from './src/Screens/ManageClasses';
-import ClassDetail from './src/Screens/ClassDetail';
-import AddClassScreen from './src/Screens/AddClassScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, CommonActions } from '@react-navigation/native';
-import { BottomNavigation, IconButton } from 'react-native-paper';
-import { StyleSheet, View } from 'react-native';
 import tw from 'twrnc';
-import RegisterScreen from './src/Screens/RegisterScreen';
-import AnnouncementScreen from './src/Screens/AnnouncementScreen';
 import ClassNavigation from './src/navigators/ClassNavigation';
+import { IconButton } from 'react-native-paper';
 import StudentNavigation from './src/navigators/StudentNavigation';
 
 const Tab = createBottomTabNavigator();
@@ -39,7 +33,7 @@ const App = () => {
             ),
           }}
         />
-         <Tab.Screen
+        <Tab.Screen
           name="StudentNavigation"
           component={StudentNavigation}
           options={{
@@ -53,35 +47,7 @@ const App = () => {
             ),
           }}
         />
-        {/* <Tab.Screen
-          name="AnnouncementScreen"
-          component={AnnouncementScreen}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <IconButton
-                style={tw`bg-${focused ? 'red-300' : 'white'}`}
-                icon="view-dashboard"
-                size={20}
-                iconColor='red' // Change icon color based on focus
-
-              />
-            ),
-          }}
-        /> */}
-        {/* <Tab.Screen
-          name="ClassDetail"
-          component={ClassDetail}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <IconButton
-                style={tw`bg-${focused ? 'red-300' : 'white'}`}
-                icon="account-tie"
-                size={20}
-                iconColor='red'
-              />
-            ),
-          }}
-        /> */}
+        
       </Tab.Navigator>
     </NavigationContainer>
   );
