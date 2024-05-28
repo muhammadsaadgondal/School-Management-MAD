@@ -4,6 +4,7 @@ import AdminDashboard from "../Screens/AdminDashboard";
 import ManageStudents from "../Screens/students/ManageStudents";
 import AddStudents from "../Screens/students/AddStudents";
 import AddFee from "../Screens/students/AddFee";
+import StudentAgeReport from "../Screens/students/StudentAgeReport";
 
 
 
@@ -21,6 +22,8 @@ function StudentNavigation() {
       <ClassStack.Screen name="ManageStudents" component={ManageStudents} />
       <ClassStack.Screen name="AddStudents" component={AddStudents} />
       <ClassStack.Screen name="AddFee" component={AddFee} />
+      <ClassStack.Screen name="StudentAgeReport" component={StudentAgeReport} />
+
 
       
 
