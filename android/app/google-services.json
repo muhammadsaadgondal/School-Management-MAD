@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "325703529831",
-    "project_id": "student-portal-75a20",
-    "storage_bucket": "student-portal-75a20.appspot.com"
+    "project_number": "700911549001",
+    "project_id": "school-management-system-3b44a",
+    "storage_bucket": "school-management-system-3b44a.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:325703529831:android:c8ab6d5def058fd434ebc2",
+        "mobilesdk_app_id": "1:700911549001:android:173aa87f2c192fe6e8dd98",
         "android_client_info": {
           "package_name": "com.schoolmanagement"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAUgzUL_Rcj0jKCefqH27dnskgPxS7FYa0"
+          "current_key": "AIzaSyA7GADrS-d__sm2juCRdtJ-vF6ryRSuSm4"
         }
       ],
       "services": {
