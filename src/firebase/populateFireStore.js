@@ -8,60 +8,27 @@ admin.initializeApp({
 });
 
 const firestore = admin.firestore();
-const studentData = Array.from({ length: 25 }, () => createRandomStudent());
+const allStudentData = []; // Array to store all student data
 
-//   const classes = [
-//       {
-//           "id": 0,
-//           "tid": "teacher1",
-//           "subject": ["English", "Urdu", "Math", "Nazra-e-Quran"]
-//       },
-//       {
-//           "id": 1,
-//           "tid": "teacher2",
-//           "subject": ["English", "Urdu", "Math", "Nazra-e-Quran", "General Knowledge"]
-//       },
-//       {
-//           "id": 2,
-//           "tid": "teacher3",
-//           "subject": ["English", "Urdu", "Math", "General Knowledge", "Islamyat"]
-//       },
-//       {
-//           "id": 3,
-//           "tid": "teacher4",
-//           "subject": ["English", "Urdu", "Math", "General Knowledge", "Islamyat", "Computer"]
-//       },
-//       {
-//           "id": 4,
-//           "tid": "teacher5",
-//           "subject": ["English", "Urdu", "Math", "General Knowledge", "Islamyat", "Computer"]
-//       },
-//       {
-//           "id": 5,
-//           "tid": "teacher6",
-//           "subject": ["English", "Urdu", "Math", "General Knowledge", "Social Study", "Islamyat", "Computer"]
-//       },
-//       {
-//           "id": 6,
-//           "tid": "teacher7",
-//           "subject": ["English", "Urdu", "Math", "General Knowledge", "Social Study", "Islamyat", "Computer"]
-//       },
-//       {
-//           "id": 7,
-//           "tid": "teacher8",
-//           "subject": ["English", "Urdu", "Math", "General Knowledge", "Social Study", "Islamyat", "Computer", "Quran"]
-//       },
-//       {
-//           "id": 8,
-//           "tid": "teacher9",
-//           "subject": ["English", "Urdu", "Math", "General Knowledge", "Social Study", "Islamyat", "Computer", "Quran"]
-//       }
-//   ];
+// Loop through grades 2 to 10
+for (let grade = 0; grade < 10; grade++) {
+    const gradeStudentData = []; // Array to store student data for the current grade
+    
+    // Generate student data 25 times for each grade
+    for (let i = 0; i < 25; i++) {
+        const student = createRandomStudent(grade, i + 1); // Generate student data
+        gradeStudentData.push(student); // Add student data to the array for the current grade
+    }
+    
+    // Add student data for the current grade to the array containing all student data
+    allStudentData.push(...gradeStudentData);
+}
 
+  
 const populateStudents = async () => {
     const studentCollection = firestore.collection('Student');
 
-    for (const student of studentData) {
+    for (const student of allStudentData) {
         try {
             const docRef = await studentCollection.add({
                 regNo: student.regNo,
@@ -90,17 +57,24 @@ const populateStudents = async () => {
 const populateClasses = async () => {
     const classCollection = firestore.collection('Class');
 
-    for (const item of classes) {
+    for (const teacher of classes) {
         try {
-            const docRef = await classCollection.add({
-                tid: item.tid,
-                subject: item.subject
-            });
-            console.log(`${docRef.id} (tid: ${item.tid}) added!`);
+          const docRef = classCollection.doc(teacher.tid); // Specify tid as the document ID
+          await docRef.set({
+            name: teacher.name,
+            dob: teacher.dob,
+            gender: teacher.gender,
+            loginCred: teacher.loginCred,
+            DoJ: teacher.DoJ,
+            pay: teacher.pay,
+            assigned: teacher.assigned,
+            subject: teacher.subject
+          });
+          console.log(`${docRef.id} (tid: ${teacher.tid}) added!`);
         } catch (error) {
-            console.error("Error adding document:", error);
+          console.error("Error adding document:", error);
         }
-    }
+      }
 
     console.log('====================================');
     console.log("Data population completed");
@@ -109,3 +83,4 @@ const populateClasses = async () => {
 // Execute the script directly
 
 populateStudents();
+
