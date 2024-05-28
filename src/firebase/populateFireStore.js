@@ -1,6 +1,7 @@
 
 const admin = require('firebase-admin');
-const serviceAccount = require('./student-portal-75a20-firebase-adminsdk-kwdj9-7cf35550a7.json');
+
+const serviceAccount = require('./school-management-system-3b44a-firebase-adminsdk-gi2vb-1e81d4008a.json');
 const createRandomStudent = require('./faker.js');
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
