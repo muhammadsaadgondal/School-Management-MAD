@@ -15,6 +15,7 @@ function DashboardNavigation() {
         headerShown: false, 
     }}
     >
+      <DashboardStack.Screen name="AdminDashboard" component={AdminDashboard} />
       <DashboardStack.Screen name="Profile" component={ProfileScreen} />
 
     </DashboardStack.Navigator>

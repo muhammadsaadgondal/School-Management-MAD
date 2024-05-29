@@ -6,10 +6,12 @@ import ClassNavigation from './src/navigators/ClassNavigation';
 import { IconButton } from 'react-native-paper';
 import StudentNavigation from './src/navigators/StudentNavigation';
 import DashboardNavigation from './src/navigators/DashboardNavigator';
+import OnBoardingScreen from './src/Screens/OnBoardingScreen';
 
 const Tab = createBottomTabNavigator();
 
 const App = () => {
+  // return(<OnBoardingScreen />);
   return (
     <NavigationContainer>
       <Tab.Navigator
