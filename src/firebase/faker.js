@@ -12,7 +12,7 @@ function guessCasteByRegion() {
 
 function createRandomStudent(grade, index) {
     return {
-        regNo: index < 10 ? grade + '' + index : grade + '0' + index,
+        regNo: index < 10 ? grade + '0' + index : grade + '' + index,
         name: faker.person.fullName(),
         DoA: faker.date.past().toISOString(),
         DoB: faker.date.birthdate({ min: 4, max: 15 }).toISOString(),
@@ -24,8 +24,8 @@ function createRandomStudent(grade, index) {
             residency: faker.address.streetAddress(),
         },
         loginCred: {
-            regNo: grade + '' + index,
-            password: grade + '' + index,
+            regNo: index < 10 ? grade + '0' + index : grade + '' + index,
+            password: index < 10 ? grade + '0' + index : grade + '' + index,
         },
         remarks: [], // Replace with logic to generate remarks (if needed)
         fee: [],     // Replace with logic to generate fee data (if needed)

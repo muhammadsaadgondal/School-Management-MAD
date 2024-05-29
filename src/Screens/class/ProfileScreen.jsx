@@ -10,7 +10,7 @@ import { Avatar, IconButton } from 'react-native-paper';
 import tw from 'twrnc';
 
 const ProfileScreen = ({ route, navigation }) => {
-  const { profileType, profileData,gradeTeaching } = route.params;
+  const { profileType, profileData, gradeTeaching } = route.params;
 
   return (
     <View style={tw`flex-1 bg-blue-800 justify-center`}>
@@ -21,7 +21,7 @@ const ProfileScreen = ({ route, navigation }) => {
           <View style={tw`items-center`}>
             <Avatar.Image
               size={100}
-              source={{ uri: profileData.image || 'https://via.placeholder.com/150' }}
+              source={{ url: 'https://via.placeholder.com/150' }}
               style={tw`mb-4`}
             />
             <Text style={tw`text-2xl font-bold text-indigo-800 mb-2`}>
@@ -31,7 +31,7 @@ const ProfileScreen = ({ route, navigation }) => {
               {profileType === 'student' ? `Student ID: ${profileData.id}` : `Teacher`}
             </Text>
           </View>
-          
+
           <View style={tw`mb-4`}>
             {profileType === 'student' ? (
               <>
@@ -42,9 +42,10 @@ const ProfileScreen = ({ route, navigation }) => {
               </>
             ) : (
               <>
-                <Text style={tw`text-lg text-indigo-800 mb-2`}>Class: {gradeTeaching}</Text>
-                <Text style={tw`text-lg text-indigo-800 mb-2`}>Experience: {profileData.experience} years</Text>
-                <Text style={tw`text-lg text-indigo-800 mb-2`}>Email: {profileData.email}</Text>
+                <Text style={tw`text-lg text-indigo-800 mb-2`}>Gender: {profileData.gender == '1' ? "Male" : "Female"}</Text>
+                <Text style={tw`text-lg text-indigo-800 mb-2`}>Teaching Grade: {gradeTeaching}</Text>
+                <Text style={tw`text-lg text-indigo-800 mb-2`}>Email: {profileData.loginCred.email}</Text>
+                <Text style={tw`text-lg text-indigo-800 mb-2`}>Joining Date: {profileData.DoJ} years</Text>
               </>
             )}
           </View>

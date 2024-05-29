@@ -2,29 +2,73 @@ import React, { useState } from 'react';
 import { View, Text, Image, ScrollView, Button, TouchableOpacity } from 'react-native';
 import { IconButton, Avatar, Portal, Modal, Provider as PaperProvider, Icon } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ImagePickerModal from "react-native-image-picker-modal";
+
+import {  launchImageLibrary } from 'react-native-image-picker';
 import tw from 'twrnc';
 import { PieChart } from 'react-native-gifted-charts';
 
-import { TalecTable } from "talec-table";
 import FancyTable from 'react-native-fancy-table';
+import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
+import CustomImagePickerModal from '../../Components/CustomImagePickerModal';
 
 
 
+const uploadImageAndAddToFirestore = async (imageUri, imageName, classId) => {
+    console.log("Inside");
+    const storageReference = storage().ref(`images/${imageName}`);
+    const selectedClass = firestore().collection('Class').doc(classId);
+    console.log(`ClassRef got ${selectedClass}`);
+
+    try {
+        const uploadTask = storageReference.putFile(imageUri);
+
+        // This promise resolves when the upload is complete
+        await new Promise((resolve, reject) => {
+            uploadTask.on(
+                'state_changed',
+                taskSnapshot => {
+                    console.log(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`);
+                },
+                error => {
+                    console.error('Error during upload:', error);
+                    reject(error);
+                },
+                () => {
+                    console.log('Upload completed successfully');
+                    resolve();
+                }
+            );
+        });
+
+        // After the upload completes, get the download URL
+        const downloadUrl = await storageReference.getDownloadURL();
+        console.log('Image uploaded successfully! Download URL:', downloadUrl);
+
+        // Update Firestore document with image URL
+        await selectedClass.update({
+            syllabusUrl: downloadUrl,
+        });
+
+        console.log('Image URL added to Firestore document!');
+    } catch (error) {
+        console.error('Error uploading image and updating Firestore:', error);
+    }
+};
 
 
-
-
-const header = ["Name", "Age", "Reg No", "Attendance"];
+const header = ["Name", "Reg No", "Date of Birth", "Gender"];
 
 const ClassDetail = ({ route }) => {
-    const { classInfo, navigation } = route.params;
+
+    /* ClassDetail */
+    const { classInfo, navigation, students, teacherInfo } = route.params;
     const [detail, setDetail] = useState(classInfo);
 
     // console.log(detail);
     // console.log("===========================");
-    const maleCount = detail.students.filter(student => student.gender === 'male').length;
-    const femaleCount = detail.students.filter(student => student.gender === 'female').length;
+    const maleCount = students.filter(student => student.gender === 'male').length;
+    const femaleCount = students.filter(student => student.gender === 'female').length;
 
     const data = [
         { value: maleCount, label: 'Male', color: '#2E86C1' },
@@ -46,9 +90,28 @@ const ClassDetail = ({ route }) => {
         setSyllabusImage(null); // Clear the selected image
     };
 
-    const handleImageSelected = (imageUri) => {
-        setSyllabusImage(imageUri); // Set the selected image URI
-        setVisible(false); // Hide the modal after selecting an image
+    const handleImageSelection = async () => {
+
+        const options = {
+            mediaType: 'photo',
+            includeBase64: false,
+            maxHeight: 2000,
+            maxWidth: 2000,
+        };
+
+        launchImageLibrary(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('Image picker error: ', response.error);
+            } else {
+                let imageUri = response.uri || response.assets?.[0]?.uri;
+                console.log(imageUri);
+                setSyllabusImage(imageUri);
+                uploadImageAndAddToFirestore(imageUri, `syllabus_${detail.id}.jpg`, detail.id);
+            }
+        });
+
     };
 
     return (
@@ -57,7 +120,7 @@ const ClassDetail = ({ route }) => {
                 <PaperProvider>
                     {/* Class Name */}
                     <View style={tw`mb-4`}>
-                        <Text style={tw`text-2xl font-bold text-center`}>{detail.grade}th Grade</Text>
+                        <Text style={tw`text-2xl font-bold text-center`}>{detail.id}th Grade</Text>
                     </View>
 
                     {/* Teacher Details */}
@@ -69,14 +132,14 @@ const ClassDetail = ({ route }) => {
                                 style={tw`mr-4`}
                             />
                             <View style={tw`flex-1`}>
-                                <Text style={tw`text-lg font-bold`}>{detail.teacher.name}</Text>
+                                <Text style={tw`text-lg font-bold`}>{teacherInfo.name}</Text>
                                 <Text>Teacher</Text>
                             </View>
                             <IconButton
                                 icon="information"
                                 color={tw.color('indigo-700')}
                                 size={25}
-                                onPress={() => navigation.navigate('Profile', { profileData: detail.teacher, profileType: 'teacher',gradeTeaching:detail.grade })}
+                                onPress={() => navigation.navigate('Profile', { profileData: teacherInfo, profileType: 'teacher', gradeTeaching: detail.id })}
                             />
                         </View>
                     </View>
@@ -116,7 +179,7 @@ const ClassDetail = ({ route }) => {
                                 bodyFontSize={13}
                                 bodyFontColor="black"
                                 header={header}
-                                tableBody={detail.students.slice(0, 3).map(({ id, ...rest }) => rest)}
+                                tableBody={students.map(({ id, name, regNo, DoB, gender }) => [name, regNo, new Date(DoB).toLocaleDateString(), gender])}
                                 rowWidth={4.8}
                                 borderColor={tw.color("indigo-400")}
                                 borderWidth={0.2}
@@ -126,25 +189,26 @@ const ClassDetail = ({ route }) => {
 
 
                         <Portal>
-                            <Modal visible={visibleP} onDismiss={hideModal} contentContainerStyle={tw` bg-white p-4 items-center justify-center`}>
-
+                            <Modal visible={visibleP} onDismiss={hideModal} contentContainerStyle={tw` bg-white p-4 items-center justify-center max-h-230`}>
                                 <Text style={tw`text-xl font-bold mb-2 items-center justify-center`}>All Students</Text>
-
-                                <FancyTable
-                                    headerBGColor={tw.color("indigo-400")}
-                                    headerFontColor="white"
-                                    headerFontSize={15}
-                                    bodyFontSize={13}
-                                    bodyFontColor="black"
-                                    header={header}
-                                    tableBody={detail.students.map(({ id, ...rest }) => rest)}
-                                    rowWidth={5}
-                                    borderColor={tw.color("indigo-400")}
-                                    borderWidth={0}
-                                />
-
+                                <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                                    <FancyTable
+                                        headerBGColor={tw.color("indigo-400")}
+                                        headerFontColor="white"
+                                        headerFontSize={15}
+                                        bodyFontSize={13}
+                                        bodyFontColor="black"
+                                        header={header}
+                                        tableBody={students.map(({ id, name, regNo, DoB, gender }) => [name, regNo, new Date(DoB).toLocaleDateString(), gender])}
+                                        rowWidth={5}
+                                        borderColor={tw.color("indigo-400")}
+                                        borderWidth={0.2}
+                                        tableHeight={1}
+                                    />
+                                </ScrollView>
                             </Modal>
                         </Portal>
+
                         <TouchableOpacity style={tw`mt-4`} onPress={showModal}>
                             <Text style={tw`text-blue-600`}>Show more</Text>
                         </TouchableOpacity>
@@ -153,10 +217,10 @@ const ClassDetail = ({ route }) => {
                     <View style={tw`bg-white p-4 rounded-lg shadow-lg mb-4`}>
                         <Text style={tw`text-xl font-bold mb-2`}>Subjects</Text>
                         {chunkArray(detail.subjects, 3).map((rowSubjects, rowIndex) => (
-                            <View key={rowIndex} style={tw`flex flex-row justify-center items-center`}>
+                            <View key={rowIndex} style={tw`flex flex-row justify-start items-center`}>
                                 {rowSubjects.map((subject, subjectIndex) => (
-                                    <TouchableOpacity key={subjectIndex} style={tw`bg-indigo-200 px-3 py-2 rounded-full mr-2 mb-2`}>
-                                        <Text style={tw`text-indigo-800`}>{subject}</Text>
+                                    <TouchableOpacity key={subjectIndex} style={tw`bg-indigo-200 px-1.5 py-1 rounded-full mr-2 mb-2`} onPress={() => console.log(subject)}>
+                                        <Text style={tw`text-indigo-800`} numberOfLines={1} ellipsizeMode='tail'>{subject}</Text>
                                     </TouchableOpacity>
                                 ))}
                                 {rowSubjects.length < 3 && (
@@ -188,33 +252,18 @@ const ClassDetail = ({ route }) => {
                                 {/* <Icon source="close-circle" size={25} color="black" style={tw` relative top-10 bg-indigo-200 `} onPress={deleteImage} /> */}
                             </View>
                         ) : (
-                            <TouchableOpacity style={tw`bg-indigo-600 p-3 rounded-lg w-full`} onPress={pickImage} >
+                            <TouchableOpacity style={tw`bg-indigo-600 p-3 rounded-lg w-full`} onPress={handleImageSelection} >
                                 <Text style={tw`text-white text-center`}>Upload Syllabus</Text>
                             </TouchableOpacity>
                         )}
-                        <ImagePickerModal
-                            title="You can either take a picture or select one from your album."
-                            data={["Take a photo", "Select from the library"]}
-                            isVisible={isVisible}
-                            onCancelPress={() => {
-                                setVisible(false);
-                            }}
-                            onBackdropPress={() => {
-                                setVisible(false);
-                            }}
-                            onPress={(item) => {
-                                // Handle the selected item
-                                setVisible(false); // Hide the modal
-                                handleImageSelected(item.assets[0].uri); // Set the URI of the selected image from the gallery
-                            }}
-                        />
+
                     </View>
 
                     {/* Manage Class Button */}
                     <View style={tw`relative bottom-0 left-0 right-0 p-4`}>
                         <TouchableOpacity
                             style={tw`bg-indigo-600 p-3 rounded-lg w-full`}
-                            onPress={() => navigation.navigate('RegisterScreen', { classInfo,navigation })}
+                            onPress={() => navigation.navigate('RegisterScreen', { classInfo, navigation })}
                         >
                             <Text style={tw`text-white text-center`}>Update Classroom</Text>
                         </TouchableOpacity>

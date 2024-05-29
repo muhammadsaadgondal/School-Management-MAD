@@ -17,9 +17,9 @@ const App = () => {
     setShowHomePage(true);
   } 
 
-  if (!showHomePage){
-    return <OnBoardingScreen setShowHomePage={homePageStateHandler} />
-  }
+  // if (!showHomePage){
+  //   return <OnBoardingScreen setShowHomePage={homePageStateHandler} />
+  // }
   return (
     <NavigationContainer>
       <Tab.Navigator
