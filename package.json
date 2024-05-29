@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@react-native-community/checkbox": "^0.5.17",
     "@react-native-community/datetimepicker": "^8.0.1",
     "@react-native-firebase/app": "^20.0.0",
@@ -22,6 +23,7 @@
     "expo-image-picker": "^15.0.5",
     "expo-print": "^13.0.1",
     "expo-sharing": "^12.0.1",
+    "firebase-admin": "^12.1.1",
     "react": "18.2.0",
     "react-native": "0.74.1",
     "react-native-app-intro-slider": "^4.0.4",

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, CommonActions } from '@react-navigation/native';
 import tw from 'twrnc';
@@ -11,7 +11,15 @@ import OnBoardingScreen from './src/Screens/OnBoardingScreen';
 const Tab = createBottomTabNavigator();
 
 const App = () => {
-  // return(<OnBoardingScreen />);
+  const [showHomePage, setShowHomePage] = useState(false);
+
+  homePageStateHandler = () => {
+    setShowHomePage(true);
+  } 
+
+  if (!showHomePage){
+    return <OnBoardingScreen setShowHomePage={homePageStateHandler} />
+  }
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -52,7 +60,7 @@ const App = () => {
         />
         <Tab.Screen
           name="DashboardNaviagation"
-          component={DashboardNavigation }
+          component={DashboardNavigation}
           options={{
             tabBarIcon: ({ focused }) => (
               <IconButton
@@ -64,7 +72,7 @@ const App = () => {
             ),
           }}
         />
-        
+
       </Tab.Navigator>
     </NavigationContainer>
   );

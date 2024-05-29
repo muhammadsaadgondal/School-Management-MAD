@@ -101,7 +101,7 @@ const ManageClasses = ({ navigation }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const usersCollection = firestore().collection('Admin').doc('ID').get();
+                const usersCollection = firestore().collection('Admin').get();
                 
                 console.log('====================================');
                 console.log(usersCollection);
