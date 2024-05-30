@@ -52,7 +52,7 @@ export default function OnBoardingScreen({ setShowHomePage}) {
                 padding: 12
             }}>
                 <Text style={{
-                    color: COLORS.title,
+                    color: COLORS.white,
                     fontWeight: '600',
                     fontSize: SIZES.h4,
                 }}>
@@ -84,7 +84,7 @@ export default function OnBoardingScreen({ setShowHomePage}) {
                         />
                             <Text style={{
                                 fontWeight: 'bold',
-                                color: COLORS.title,
+                                color: COLORS.white,
                                 fontSize: SIZES.h1,
                             }}>
                                 {item.title}
@@ -92,7 +92,7 @@ export default function OnBoardingScreen({ setShowHomePage}) {
                             <Text style={{
                                 textAlign: 'center',
                                 paddingTop: 5,
-                                color: COLORS.title
+                                color: COLORS.white
                             }}>
                                 {item.description}
                             </Text>
@@ -100,7 +100,7 @@ export default function OnBoardingScreen({ setShowHomePage}) {
                     )
                 }}
                 activeDotStyle={{
-                    backgroundColor: COLORS.primary,
+                    backgroundColor: COLORS.white,
                     width: 30,
                 }}
                 showSkipButton
