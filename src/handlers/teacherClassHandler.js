@@ -34,7 +34,7 @@ async function getTeacherStudents(teacherId) {
             return [];
         }
         return students.map(student => {
-            const activeSession = student.session.find(s => s.status === 'Active');
+            const activeSession = student.session.find(s => s.status === 'Active' && s.class == classId);
             return {
                 regNo: student.regNo,
                 name: student.name,
