@@ -19,22 +19,20 @@ async function getTeacherStudents(teacherId) {
             return [];
         }
 
-        const classData = classSnapshot.docs.map(doc => doc.data())[0];
-        const classId = parseInt(classData.id);
+        const classData = classSnapshot.docs[0].data();
+        const classId = classData.id.toString();
 
-        const studentsSnapshot = await db.collection('Student')
-            .get();
+        const studentsSnapshot = await db.collection('Student').where('regNo', '>=', classId + '00')
+                                                       .where('regNo', '<', (parseInt(classId) + 1).toString() + '00')
+                                                       .get();
 
-        const students = studentsSnapshot.docs.map(doc => doc.data())
-            .filter(student => {
-                const regNo = parseInt(student.regNo);
-                return regNo >= classId * 100 && regNo < (classId + 1) * 100;
-            });
-
-        if (students.length === 0) {
+        if (studentsSnapshot.empty) {
             console.log(`No students found for class ID: ${classId}`);
             return [];
         }
+
+        const students = studentsSnapshot.docs.map(doc => doc.data());
+
         return students.map(student => {
             const activeSession = student.session.find(s => s.status === 'Active' && s.class == classId);
             return {
