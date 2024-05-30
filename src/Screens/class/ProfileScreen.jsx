@@ -10,12 +10,9 @@ import { Avatar, IconButton } from 'react-native-paper';
 import tw from 'twrnc';
 
 const ProfileScreen = ({ route, navigation }) => {
-  const { profileType, profileData, gradeTeaching } = route.params;
+  const { profileType, profileData,gradeTeaching } = route.params;
 
   // const profileType, profileData, gradeTeaching
-  const profileType="Teacher";
-  const gradeTeaching='3'
-  const profileData = { id: 101, name: "Mr. Smith", email: "temp@gmail.com", experience: 5 } 
   return (
     <View style={tw`flex-1 bg-blue-800 justify-center`}>
       <ScrollView
@@ -25,7 +22,7 @@ const ProfileScreen = ({ route, navigation }) => {
           <View style={tw`items-center`}>
             <Avatar.Image
               size={100}
-              source={{ url: 'https://via.placeholder.com/150' }}
+              source={{ uri: profileData.image || 'https://via.placeholder.com/150' }}
               style={tw`mb-4`}
             />
             <Text style={tw`text-2xl font-bold text-indigo-800 mb-2`}>
