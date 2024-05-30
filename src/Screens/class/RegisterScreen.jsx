@@ -12,6 +12,7 @@ import tw from 'twrnc';
 import { fetchAvailableTeachers } from '../../firebase/handlers/Teachers';
 import { delStudents, getNonAssignedStudents, updateClassStudents } from '../../firebase/handlers/Student';
 import { updateClassTeacher } from '../../firebase/handlers/Class';
+import { ActivityIndicator } from 'react-native-paper';
 
 // Placeholder values for grades
 const gradeLabels = [
@@ -19,8 +20,10 @@ const gradeLabels = [
   'Grade 4', 'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8'
 ];
 
-const RegisterScreen = ({ route,navigation }) => {
-  const { classInfo, students, teacherInfo } = route.params;
+const RegisterScreen = ({ route, navigation }) => {
+  const { classInfo, students, teacherInfo, reload } = route.params;
+
+  const [updating, setUpdating] = useState(false);
 
   const [selectedStudents, setSelectedStudents] = useState(students?.map((student) => student.regNo) || []);
   const [searchQuery, setSearchQuery] = useState('');
@@ -85,27 +88,30 @@ const RegisterScreen = ({ route,navigation }) => {
   };
 
   const updateClassInfo = async () => {
+    setUpdating(true);
+    console.log('Updating class...');
     const { selectedStudentObjects, notSelectedStudentObjects } = getSelectedAndNotSelectedStudents();
     // console.log('Selected students:', selectedStudentObjects);
     // console.log('Not selected students:', notSelectedStudentObjects);
 
     await updateClassTeacher(classInfo.id, teacherName);
     await updateClassStudents(classInfo.id, selectedStudentObjects, notSelectedStudentObjects);
-    navigation.goBack();
+    reload();
+    navigation.navigate('ManageClasses');
   };
 
   return (
-    <View style={tw`flex-1 bg-blue-500 justify-center`}>
+    <View style={tw`flex-1 bg-indigo-100 justify-center`}>
       <ScrollView
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={tw`flex-grow justify-center items-center px-4`}
+        contentContainerStyle={tw`flex-grow justify-center items-center px-4 `}
       >
-        <Text style={tw`text-2xl text-white font-bold p-4`}>
+        <Text style={tw`text-2xl text-indigo-700 font-bold p-4`}>
           {classInfo === undefined ? 'Register Class' : 'Update Class Info'}
         </Text>
 
-        <View style={tw`bg-white p-3 mb-2 w-full rounded-lg shadow-lg`}>
-          <Text style={tw`text-base text-black`}>Grade: {gradeLabels[classInfo.id]}</Text>
+        <View style={tw`bg-indigo-700 p-3 mb-2 w-full rounded-lg shadow-lg`}>
+          <Text style={tw`text-base text-white`}>Grade: {gradeLabels[classInfo.id]}</Text>
         </View>
 
         <DropDownPicker
@@ -116,18 +122,18 @@ const RegisterScreen = ({ route,navigation }) => {
           setValue={setTeacherName}
           containerStyle={tw`h-10 mb-5 w-full`}
           style={tw`bg-white`}
-          dropDownContainerStyle={tw`bg-white`}
+          dropDownContainerStyle={tw`bg-indigo-300 text-white`}
           placeholder="Select Teacher"
-          zIndex={2000}
-          zIndexInverse={2000}
+          zIndex={3000}
+          zIndexInverse={3000}
         />
 
-        <View style={tw`bg-white p-4 rounded-lg shadow-lg mb-4 w-full`}>
-          <Text style={tw`text-xl font-bold mb-2`}>Subjects</Text>
+        <View style={tw`bg-indigo-700 p-4 rounded-lg shadow-lg mb-4 w-full`}>
+          <Text style={tw`text-xl text-white font-bold mb-2`}>Subjects</Text>
           {chunkArray(classInfo.subjects, 3).map((rowSubjects, rowIndex) => (
             <View key={rowIndex} style={tw`flex flex-row justify-start items-center`}>
               {rowSubjects.map((subject, subjectIndex) => (
-                <TouchableOpacity key={subjectIndex} style={tw`bg-indigo-200 px-1.5 py-1 rounded-full mr-2 mb-2`} onPress={() => console.log(subject)}>
+                <TouchableOpacity key={subjectIndex} style={tw`bg-indigo-100 px-1.5 py-1 rounded-full mr-2 mb-2`} onPress={() => console.log(subject)}>
                   <Text style={tw`text-indigo-800`} numberOfLines={1} ellipsizeMode='tail'>{subject}</Text>
                 </TouchableOpacity>
               ))}
@@ -142,14 +148,14 @@ const RegisterScreen = ({ route,navigation }) => {
           placeholder="Search for Students"
           onChangeText={onChangeSearch}
           value={searchQuery}
-          style={tw`w-full bg-indigo-100`}
+          style={tw`w-full bg-indigo-300`}
         />
 
-        <View style={tw`bg-white m-4 p-4 rounded-lg shadow-lg mb-4 w-full max-h-50`}>
-          <Text style={tw`text-xl font-bold mb-2`}>Students</Text>
+        <View style={tw`bg-indigo-700 m-4 p-4 rounded-lg shadow-lg mb-4 w-full max-h-50`}>
+          <Text style={tw`text-xl font-bold mb-2 text-white`}>Students</Text>
           <ScrollView style={tw`flex: 1`}>
             {filteredStudents.map((student) => (
-              <View key={student.regNo} style={tw`bg-indigo-100 rounded-lg shadow-lg mb-4`}>
+              <View key={student.regNo} style={tw`bg-indigo-300 rounded-lg shadow-lg mb-4`}>
                 <View style={tw`flex-row items-center`}>
                   <Checkbox
                     status={selectedStudents.includes(student.regNo) ? 'checked' : 'unchecked'}
@@ -180,10 +186,13 @@ const RegisterScreen = ({ route,navigation }) => {
             )}
           </ScrollView>
         </View>
-        
 
-        <TouchableOpacity style={tw`bg-green-500 p-3 rounded-lg w-full mt-1`} onPress={() => updateClassInfo()}>
-          <Text style={tw`text-white text-center`}>Update</Text>
+
+        <TouchableOpacity style={tw`bg-indigo-700 p-3 rounded-lg w-full mt-1`} onPress={() => updateClassInfo()}>
+          {updating ? <ActivityIndicator animating={true} color={'white'} />
+            :
+            <Text style={tw`text-white text-center`}>Update</Text>
+          }
         </TouchableOpacity>
       </ScrollView>
     </View>

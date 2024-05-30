@@ -18,7 +18,7 @@ const writeNotification = async (title, message, classId, visibleTill) => {
             message: message,
             classId: classId,
             visibleTill: visibleTill,
-            datePosted: new Date().toISOString()
+            datePosted: new Date().toLocaleDateString()
         };
 
         const notificationRef = firestore().collection('Notification').doc();
@@ -54,11 +54,12 @@ const deleteNotification = async (notification) => {
 }
 
 
-const updateNotification = async (title, message, visibleTill, classId) => {
+const updateNotification = async (title, message, datePosted, classId) => {
     try {
         // Query for the notification with matching classId, title, and message
         const notificationRef = firestore().collection('Notification')
-            .where('classId', '==', classId);
+            .where('classId', '==', classId)
+            .where('datePosted', '==', datePosted);
 
         const snapshot = await notificationRef.get();
 
@@ -73,7 +74,6 @@ const updateNotification = async (title, message, visibleTill, classId) => {
                 title: title,
                 message: message,
                 classId: classId,
-                visibleTill: visibleTill
             });
         });
 

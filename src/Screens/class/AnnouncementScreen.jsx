@@ -7,6 +7,9 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { getClass } from './ProfileScreen';
 import { updateNotification, writeNotification } from '../../firebase/handlers/Notification';
 
+import { fetchNotificationsRef } from '../../Components/ElevatedCard';
+
+
 const classes = [
     { label: 'All', value: '0' },
     { label: 'Nursery', value: '1' },
@@ -20,10 +23,10 @@ const classes = [
     { label: 'Grade 7', value: '9' },
     { label: 'Grade 8', value: '10' },
 ];
-const AnnouncementScreen = ({ route }) => {
-    const { announcement, navigation } = route.params;
+const AnnouncementScreen = ({ route, navigation }) => {
+    const { announcement, reloadNotifications } = route.params;
     // console.log(announcement);
-    const [date, setDate] = useState(announcement === undefined ? new Date() : new Date(announcement.visibleTill));
+    const [date, setDate] = useState(announcement === undefined ? new Date().toLocaleDateString() : new Date(announcement.datePosted).toLocaleDateString());
 
     const [title, setTitle] = useState(announcement === undefined ? '' : announcement.title);
     const [description, setDescription] = useState(announcement === undefined ? '' : announcement.message);
@@ -31,7 +34,7 @@ const AnnouncementScreen = ({ route }) => {
 
     /* DropDown */
     const [classOpen, setClassOpen] = useState(false);
-    const [className, setClassname] = useState(getClass(announcement?.classId) || 'None');
+    const [className, setClassname] = useState(announcement?.classId || '0');
 
     const onChangeDate = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -41,18 +44,20 @@ const AnnouncementScreen = ({ route }) => {
 
     const handleUpdate = async () => {
         // Handle the submit action (e.g., save the announcement)
-        await updateNotification(title, description, date, className);
+        await updateNotification(title, description, announcement.datePosted, className);
+        reloadNotifications();
         navigation.goBack();
     };
     const handleSubmit = async () => {
         console.log("Adding notification");
         await writeNotification(title, description, className, date);
+        reloadNotifications();
         navigation.goBack();
     };
 
 
     return (
-        <View style={tw`flex-1 bg-blue-800 justify-center `}>
+        <View style={tw`flex-1 bg-indigo-700 justify-center `}>
             <ScrollView
                 keyboardShouldPersistTaps="handled"
                 contentContainerStyle={tw`flex-grow justify-center items-center px-4`}>
@@ -73,14 +78,22 @@ const AnnouncementScreen = ({ route }) => {
                     zIndexInverse={2000}
                 />
 
-                <TouchableOpacity onPress={() => setShowDatePicker(true)} style={tw`w-full mb-5`}>
-                    <PaperTextInput
-                        label="Valid till"
-                        value={date.toDateString()}
-                        editable={false}
-                        style={tw`bg-white w-full rounded-lg`}
-                    />
-                </TouchableOpacity>
+                {announcement === undefined ?
+                    <TouchableOpacity onPress={() => setShowDatePicker(true)} style={tw`w-full mb-5`}>
+                        <PaperTextInput
+                            label="Valid till"
+                            value={date}
+                            editable={false}
+                            style={tw`bg-white w-full rounded-lg`}
+                        />
+                    </TouchableOpacity>
+                    :
+                    <View  >
+                        <Text style={tw`text-indigo-700 `}>
+
+                        </Text>
+                    </View>
+                }
                 {showDatePicker && (
                     <DateTimePicker
                         value={date}

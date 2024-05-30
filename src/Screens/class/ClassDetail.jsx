@@ -60,10 +60,10 @@ const uploadImageAndAddToFirestore = async (imageUri, imageName, classId) => {
 
 const header = ["Name", "Reg No", "Date of Birth", "Gender"];
 
-const ClassDetail = ({ route }) => {
+const ClassDetail = ({ route,navigation }) => {
 
     /* ClassDetail */
-    const { classInfo, navigation, students, teacherInfo } = route.params;
+    const { classInfo,  students, teacherInfo,reload } = route.params;
     const [detail, setDetail] = useState(classInfo);
 
     // console.log(detail);
@@ -264,7 +264,7 @@ const ClassDetail = ({ route }) => {
                     <View style={tw`relative bottom-0 left-0 right-0 p-4`}>
                         <TouchableOpacity
                             style={tw`bg-indigo-600 p-3 rounded-lg w-full`}
-                            onPress={() => navigation.navigate('RegisterScreen', { classInfo, navigation })}
+                            onPress={() => navigation.navigate('RegisterScreen', { classInfo: detail, teacherInfo, students})}
                         >
                             <Text style={tw`text-white text-center`}>Update Classroom</Text>
                         </TouchableOpacity>

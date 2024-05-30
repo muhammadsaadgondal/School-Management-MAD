@@ -4,7 +4,6 @@ import React from 'react'
 import { Avatar, Card, IconButton } from 'react-native-paper'
 
 
-
 export default function AnnouncementCard() {
 
     return (
