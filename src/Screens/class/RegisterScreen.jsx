@@ -1,106 +1,114 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   ScrollView,
+  Alert
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Checkbox, Searchbar, Avatar, IconButton } from 'react-native-paper';
 import tw from 'twrnc';
+import { fetchAvailableTeachers } from '../../firebase/handlers/Teachers';
+import { delStudents, getNonAssignedStudents, updateClassStudents } from '../../firebase/handlers/Student';
+import { updateClassTeacher } from '../../firebase/handlers/Class';
 
-const teachers = [
-  { label: 'Mr. Smith', value: 'Smith' },
-  { label: 'Ms. Johnson', value: 'Johnson' },
-  { label: 'Mrs. Brown', value: 'Brown' },
-];
-const teachingSubjects = [
-  { label: 'Math', value: 'Math' },
-  { label: 'Science', value: 'Science' },
-  { label: 'English', value: 'English' },
-  { label: 'Islamiyat', value: 'Islamiyat' },
-  { label: 'Urdu', value: 'Urdu' },
-  { label: 'Chemistry', value: 'Chemistry' },
-  { label: 'Physics', value: 'Physics' },
-];
-const studentsData = [
-  { id: 1, name: "John Cena", age: 15, reg_no: "101", attendance: "85%", gender: "male" },
-  { id: 2, name: "Muhammad Saad Gondal", age: 16, reg_no: "102", attendance: "90%", gender: "male" },
-  { id: 3, name: "Bob", age: 15, reg_no: "103", attendance: "88%", gender: "male" },
-  { id: 4, name: "Charlie", age: 16, reg_no: "104", attendance: "92%", gender: "female" },
-  { id: 5, name: "David", age: 15, reg_no: "105", attendance: "80%", gender: "female" }
+
+// Placeholder values for grades
+const gradeLabels = [
+  'Nursery', 'KG', 'Grade 1', 'Grade 2', 'Grade 3',
+  'Grade 4', 'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8'
 ];
 
 const RegisterScreen = ({ route }) => {
-  const { classInfo, navigation } = route.params;
+  const { classInfo, students, teacherInfo, navigation } = route.params;
 
-  const initialGrade = classInfo?.grade || '';
-  const initialTeacherName = classInfo?.teacher?.name || '';
-  const initialSubjects = classInfo?.subjects || [];
-  const initialSelectedStudents = classInfo?.students?.map((student) => student.id) || [];
-
-  const [grade, setGrade] = useState(initialGrade);
-  const [teacherName, setTeacherName] = useState(initialTeacherName);
-  const [selectedSubjects, setSelectedSubjects] = useState(initialSubjects);
-  const [selectedStudents, setSelectedStudents] = useState(initialSelectedStudents);
-  const [subjects, setSubjects] = useState(initialSubjects);
+  const [selectedStudents, setSelectedStudents] = useState(students?.map((student) => student.regNo) || []);
   const [searchQuery, setSearchQuery] = useState('');
-
-  const [gradeOpen, setGradeOpen] = useState(false);
+  const [teacherName, setTeacherName] = useState(teacherInfo?.name || 'None');
+  const [allAvailableStudents, setAllAvailableStudents] = useState([]);
+  const [availableTeachers, setAvailableTeachers] = useState(teacherInfo ? teacherInfo : []);
   const [teacherOpen, setTeacherOpen] = useState(false);
-  const [subjectOpen, setSubjectOpen] = useState(false);
+  const [teachers, setTeachers] = useState([{
+    label: teacherInfo?.name,
+    value: teacherInfo?.name
+  }, {
+    label: 'None',
+    value: 'None'
+  }]);
 
-  const handleAddSubject = () => {
-    setSubjects([...selectedSubjects]);
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fetchedTeachers = await fetchAvailableTeachers();
+        setAvailableTeachers(fetchedTeachers);
+        setTeachers([
+          { label: 'Select Teacher', value: '' },
+          ...fetchedTeachers.map((teacher) => ({ label: teacher.name, value: teacher.name })),
+          ...(teacherInfo && !fetchedTeachers.some(t => t.name === teacherInfo.name)
+            ? [{ label: teacherInfo.name, value: teacherInfo.name }] : [])
+        ]);
+        const nonAssignedStudents = await getNonAssignedStudents();
+        setAllAvailableStudents(nonAssignedStudents);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const onChangeSearch = (query) => setSearchQuery(query);
 
-  const toggleStudentSelection = (studentId) => {
+  const toggleStudentSelection = (studentRegNo) => {
     setSelectedStudents((prevSelectedStudents) => {
-      if (prevSelectedStudents.includes(studentId)) {
-        return prevSelectedStudents.filter((id) => id !== studentId);
+      if (prevSelectedStudents.includes(studentRegNo)) {
+        return prevSelectedStudents.filter((id) => id !== studentRegNo);
       } else {
-        return [...prevSelectedStudents, studentId];
+        if (prevSelectedStudents.length >= 24) {
+          Alert.alert('Limit Reached', 'Only 24 students can be added.');
+          return prevSelectedStudents;
+        }
+        return [...prevSelectedStudents, studentRegNo];
       }
     });
   };
 
-  const filteredStudents = studentsData.filter((student) =>
+  const filteredStudents = [...students, ...allAvailableStudents].filter((student, index, self) =>
+    index === self.findIndex((s) => s.regNo === student.regNo) // Remove duplicates
+  ).filter((student) =>
     student.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const getSelectedAndNotSelectedStudents = () => {
+    const selectedStudentObjects = filteredStudents.filter(student => selectedStudents.includes(student.regNo));
+    const notSelectedStudentObjects = filteredStudents.filter(student => !selectedStudents.includes(student.regNo));
+    return { selectedStudentObjects, notSelectedStudentObjects };
+  };
+
+  const updateClassInfo = async () => {
+    const { selectedStudentObjects, notSelectedStudentObjects } = getSelectedAndNotSelectedStudents();
+    // console.log('Selected students:', selectedStudentObjects);
+    // console.log('Not selected students:', notSelectedStudentObjects);
+
+    await updateClassTeacher(classInfo.id, teacherName);
+    await updateClassStudents(classInfo.id, selectedStudentObjects, notSelectedStudentObjects);
+    navigation.goBack();
+  };
+
   return (
-    <View style={tw`flex-1 bg-blue-800 justify-center`}>
+    <View style={tw`flex-1 bg-blue-500 justify-center`}>
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={tw`flex-grow justify-center items-center px-4`}
       >
         <Text style={tw`text-2xl text-white font-bold p-4`}>
-          {classInfo == undefined ? 'Register Class' : 'Update Class Info'}
+          {classInfo === undefined ? 'Register Class' : 'Update Class Info'}
         </Text>
-        <DropDownPicker
-          open={gradeOpen}
-          value={grade}
-          items={[
-            { label: 'Grade 1', value: '1' },
-            { label: 'Grade 2', value: '2' },
-            { label: 'Grade 3', value: '3' },
-            { label: 'Grade 4', value: '4' },
-            { label: 'Grade 5', value: '5' },
-            { label: 'Grade 6', value: '6' },
-            { label: 'Grade 7', value: '7' },
-            { label: 'Grade 8', value: '8' },
-          ]}
-          setOpen={setGradeOpen}
-          setValue={setGrade}
-          containerStyle={tw`h-10 mb-5 w-full`}
-          style={tw`bg-white`}
-          dropDownContainerStyle={tw`bg-white`}
-          placeholder="Select Grade"
-          zIndex={3000}
-          zIndexInverse={1000}
-        />
+
+        <View style={tw`bg-white p-3 mb-2 w-full rounded-lg shadow-lg`}>
+          <Text style={tw`text-base text-black`}>Grade: {gradeLabels[classInfo.id]}</Text>
+        </View>
+
         <DropDownPicker
           open={teacherOpen}
           value={teacherName}
@@ -114,54 +122,19 @@ const RegisterScreen = ({ route }) => {
           zIndex={2000}
           zIndexInverse={2000}
         />
-        <View style={tw`flex-row relative`}>
-          <DropDownPicker
-            open={subjectOpen}
-            value={selectedSubjects}
-            items={teachingSubjects}
-            setOpen={setSubjectOpen}
-            setValue={setSelectedSubjects}
-            containerStyle={tw`h-10 flex-1`}
-            style={tw`h-full bg-white relative z-10`}
-            dropDownContainerStyle={tw`bg-white`}
-            placeholder="Select Subjects"
-            multiple={true}
-            zIndex={1000}
-            zIndexInverse={3000}
-            min={0}
-            max={teachingSubjects.length}
-            onChangeItem={(items) => setSelectedSubjects(items.map(item => item.value))}
-            renderBadge={(item) => (
-              <Checkbox
-                status={selectedSubjects.includes(item.value) ? 'checked' : 'unchecked'}
-                onPress={() => setSelectedSubjects((prevSelected) =>
-                  prevSelected.includes(item.value)
-                    ? prevSelected.filter(value => value !== item.value)
-                    : [...prevSelected, item.value]
-                )}
-              />
-            )}
-          />
-          <TouchableOpacity
-            style={tw`bg-green-500 ml-4 p-3 rounded-lg h-full relative z-10`}
-            activeOpacity={0.5}
-            onPress={handleAddSubject}>
-            <Text style={tw`text-white text-sm`}>Add Subjects</Text>
-          </TouchableOpacity>
-        </View>
 
-        <View style={tw`bg-white m-4 p-4 rounded-lg shadow-lg mb-4 w-full relative z-0`}>
+        <View style={tw`bg-white p-4 rounded-lg shadow-lg mb-4 w-full`}>
           <Text style={tw`text-xl font-bold mb-2`}>Subjects</Text>
-          {chunkArray(subjects, 3).map((rowSubjects, rowIndex) => (
-            <View key={rowIndex} style={tw`flex-row justify-center items-center`}>
+          {chunkArray(classInfo.subjects, 3).map((rowSubjects, rowIndex) => (
+            <View key={rowIndex} style={tw`flex flex-row justify-start items-center`}>
               {rowSubjects.map((subject, subjectIndex) => (
-                <TouchableOpacity key={subjectIndex} style={tw`bg-indigo-200 px-3 py-2 rounded-full mx-2 mb-2`}>
-                  <Text style={tw`text-indigo-800`}>{subject}</Text>
+                <TouchableOpacity key={subjectIndex} style={tw`bg-indigo-200 px-1.5 py-1 rounded-full mr-2 mb-2`} onPress={() => console.log(subject)}>
+                  <Text style={tw`text-indigo-800`} numberOfLines={1} ellipsizeMode='tail'>{subject}</Text>
                 </TouchableOpacity>
               ))}
-              {Array.from({ length: 3 - rowSubjects.length }).map((_, idx) => (
-                <View key={idx} style={tw`mx-2 mb-2`} />
-              ))}
+              {rowSubjects.length < 3 && (
+                <View style={tw`flex-grow`} />
+              )}
             </View>
           ))}
         </View>
@@ -177,11 +150,11 @@ const RegisterScreen = ({ route }) => {
           <Text style={tw`text-xl font-bold mb-2`}>Students</Text>
           <ScrollView style={tw`flex: 1`}>
             {filteredStudents.map((student) => (
-              <View key={student.id} style={tw`bg-indigo-100 rounded-lg shadow-lg mb-4`}>
+              <View key={student.regNo} style={tw`bg-indigo-100 rounded-lg shadow-lg mb-4`}>
                 <View style={tw`flex-row items-center`}>
                   <Checkbox
-                    status={selectedStudents.includes(student.id) ? 'checked' : 'unchecked'}
-                    onPress={() => toggleStudentSelection(student.id)}
+                    status={selectedStudents.includes(student.regNo) ? 'checked' : 'unchecked'}
+                    onPress={() => toggleStudentSelection(student.regNo)}
                     style={tw`mr-2`}
                   />
                   <Avatar.Image
@@ -191,6 +164,8 @@ const RegisterScreen = ({ route }) => {
                   />
                   <View style={tw`flex-1`}>
                     <Text style={tw`text-base font-bold`}>{student.name}</Text>
+                    <Text style={tw`text-sm`}>{`Reg No: ${student.regNo}`}</Text>
+                    <Text style={tw`text-sm`}>{`Gender: ${student.gender}`}</Text>
                   </View>
                   <IconButton
                     icon="information"
@@ -206,9 +181,12 @@ const RegisterScreen = ({ route }) => {
             )}
           </ScrollView>
         </View>
+        <TouchableOpacity style={tw`bg-pink-500 p-3 rounded-lg  mt-1`} onPress={() => updateClassInfo()}>
+          <Text style={tw`text-white text-center`}>Add new Student</Text>
+        </TouchableOpacity>
 
-        <TouchableOpacity style={tw`bg-green-500 p-3 rounded-lg w-full mt-1`} onPress={() => console.log('Register Button Pressed')}>
-          <Text style={tw`text-white text-center`}>{classInfo == undefined ? 'Create' : 'Update'}</Text>
+        <TouchableOpacity style={tw`bg-green-500 p-3 rounded-lg w-full mt-1`} onPress={() => updateClassInfo()}>
+          <Text style={tw`text-white text-center`}>Update</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>

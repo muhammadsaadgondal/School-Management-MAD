@@ -132,7 +132,7 @@ const ClassDetail = ({ route }) => {
                                 style={tw`mr-4`}
                             />
                             <View style={tw`flex-1`}>
-                                <Text style={tw`text-lg font-bold`}>{teacherInfo.name}</Text>
+                                <Text style={tw`text-lg font-bold`}>{teacherInfo?.name|| "No assigned" }</Text>
                                 <Text>Teacher</Text>
                             </View>
                             <IconButton
