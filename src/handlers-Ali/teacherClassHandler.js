@@ -1,6 +1,8 @@
 const {firestore} = require('../firebase/firestore');
 const db = firestore;
 
+const {getStudent} = require('./studentHandler');
+
 async function getTeacherClass(teacherId) {
     const classRef = db.collection('Class').where('tid', '==', teacherId);
     const snapshot = await classRef.get();
@@ -17,24 +19,22 @@ async function getTeacherStudents(teacherId) {
             return [];
         }
 
-        const classData = classSnapshot.docs.map(doc => doc.data())[0];
-        const classId = parseInt(classData.id);
+        const classData = classSnapshot.docs[0].data();
+        const classId = classData.id.toString();
 
-        const studentsSnapshot = await db.collection('Student')
-            .get();
+        const studentsSnapshot = await db.collection('Student').where('regNo', '>=', classId + '00')
+                                                       .where('regNo', '<', (parseInt(classId) + 1).toString() + '00')
+                                                       .get();
 
-        const students = studentsSnapshot.docs.map(doc => doc.data())
-            .filter(student => {
-                const regNo = parseInt(student.regNo);
-                return regNo >= classId * 100 && regNo < (classId + 1) * 100;
-            });
-
-        if (students.length === 0) {
+        if (studentsSnapshot.empty) {
             console.log(`No students found for class ID: ${classId}`);
             return [];
         }
+
+        const students = studentsSnapshot.docs.map(doc => doc.data());
+
         return students.map(student => {
-            const activeSession = student.session.find(s => s.status === 'Active');
+            const activeSession = student.session.find(s => s.status === 'Active' && s.class == classId);
             return {
                 regNo: student.regNo,
                 name: student.name,
@@ -48,4 +48,39 @@ async function getTeacherStudents(teacherId) {
     }
 }
 
-module.exports = { getTeacherClass, getTeacherStudents };
+async function updateMarks(regNo, subjectName, marks) {
+    try {
+        const student = await getStudent(regNo);
+        if (!student) {
+            throw new Error(`Student with regNo ${regNo} not found`);
+        }
+
+        let updated = false;
+        for (let i = 0; i < student.session.length; i++) {
+            if (student.session[i].status === 'Active') {
+                student.session[i].subjects.forEach(subject => {
+                    if (subject.name === subjectName) {
+                        subject.finalTerm = marks.finalTerm;
+                        subject.midTerm = marks.midTerm;
+                        subject.firstTerm = marks.firstTerm;
+                        updated = true;
+                    }
+                });
+            }
+        }
+
+        if (!updated) {
+            throw new Error(`Subject ${subjectName} not found in active session for student with regNo ${regNo}`);
+        }
+
+        // Update the student data back to the database
+        const studentRef = db.collection('Student').doc(regNo.toString());
+        await studentRef.update(student);
+
+        console.log(`Marks updated successfully for student with regNo ${regNo} in subject ${subjectName}`);
+    } catch (error) {
+        console.error('Error updating marks:', error);
+    }
+}
+
+module.exports = { getTeacherClass, getTeacherStudents, updateMarks };
