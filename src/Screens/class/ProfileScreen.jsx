@@ -12,6 +12,10 @@ import tw from 'twrnc';
 const ProfileScreen = ({ route, navigation }) => {
   const { profileType, profileData, gradeTeaching } = route.params;
 
+  // const profileType, profileData, gradeTeaching
+  const profileType="Teacher";
+  const gradeTeaching='3'
+  const profileData = { id: 101, name: "Mr. Smith", email: "temp@gmail.com", experience: 5 } 
   return (
     <View style={tw`flex-1 bg-blue-800 justify-center`}>
       <ScrollView
@@ -31,6 +35,7 @@ const ProfileScreen = ({ route, navigation }) => {
               {profileType === 'student' ? `Student ID: ${profileData.id}` : `Teacher`}
             </Text>
           </View>
+
 
           <View style={tw`mb-4`}>
             {profileType === 'student' ? (

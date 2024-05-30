@@ -4,6 +4,7 @@ import ManageStudents from "../Screens/students/ManageStudents";
 import AddStudents from "../Screens/students/AddStudents";
 import AddFee from "../Screens/students/AddFee";
 import StudentAgeReport from "../Screens/students/StudentAgeReport";
+import UpdateStudent from "../Screens/students/UpdateStudent";
 
 
 
@@ -19,6 +20,7 @@ function StudentNavigation() {
       {/* Students Navigation */}
       <StudentStack.Screen name="ManageStudents" component={ManageStudents} />
       <StudentStack.Screen name="AddStudents" component={AddStudents} />
+      <StudentStack.Screen name="UpdateStudent" component={UpdateStudent} />
       <StudentStack.Screen name="AddFee" component={AddFee} />
       <StudentStack.Screen name="StudentAgeReport" component={StudentAgeReport} />
 
