@@ -13,15 +13,14 @@ import { fetchAvailableTeachers } from '../../firebase/handlers/Teachers';
 import { delStudents, getNonAssignedStudents, updateClassStudents } from '../../firebase/handlers/Student';
 import { updateClassTeacher } from '../../firebase/handlers/Class';
 
-
 // Placeholder values for grades
 const gradeLabels = [
   'Nursery', 'KG', 'Grade 1', 'Grade 2', 'Grade 3',
   'Grade 4', 'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8'
 ];
 
-const RegisterScreen = ({ route }) => {
-  const { classInfo, students, teacherInfo, navigation } = route.params;
+const RegisterScreen = ({ route,navigation }) => {
+  const { classInfo, students, teacherInfo } = route.params;
 
   const [selectedStudents, setSelectedStudents] = useState(students?.map((student) => student.regNo) || []);
   const [searchQuery, setSearchQuery] = useState('');
@@ -64,8 +63,8 @@ const RegisterScreen = ({ route }) => {
       if (prevSelectedStudents.includes(studentRegNo)) {
         return prevSelectedStudents.filter((id) => id !== studentRegNo);
       } else {
-        if (prevSelectedStudents.length >= 24) {
-          Alert.alert('Limit Reached', 'Only 24 students can be added.');
+        if (prevSelectedStudents.length > 25) {
+          Alert.alert('Limit Reached', 'Only 25 students can be added.');
           return prevSelectedStudents;
         }
         return [...prevSelectedStudents, studentRegNo];
@@ -181,9 +180,7 @@ const RegisterScreen = ({ route }) => {
             )}
           </ScrollView>
         </View>
-        <TouchableOpacity style={tw`bg-pink-500 p-3 rounded-lg  mt-1`} onPress={() => updateClassInfo()}>
-          <Text style={tw`text-white text-center`}>Add new Student</Text>
-        </TouchableOpacity>
+        
 
         <TouchableOpacity style={tw`bg-green-500 p-3 rounded-lg w-full mt-1`} onPress={() => updateClassInfo()}>
           <Text style={tw`text-white text-center`}>Update</Text>

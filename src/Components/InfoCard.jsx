@@ -57,21 +57,14 @@ const InfoCard = ({ data, navigation }) => {
     return (
         <TouchableOpacity
             style={tw`mt-2 mb-2 ml-4 mr-4 pt-2 pb-2 bg-indigo-700 rounded-lg`}
-            onPress={() => navigation.navigate('ClassDetail', { classInfo, students, teacherInfo })}
+            onPress={() => navigation.navigate('ClassDetail', { classInfo, students, teacherInfo,navigation })}
         >
             <IconButton
                 icon="progress-pencil"
                 size={20}
                 iconColor='white'
-                style={tw`absolute top--2 right-6`}
+                style={tw`absolute top--2 right-0`}
                 onPress={() => navigation.navigate('RegisterScreen', { classInfo, students, teacherInfo })}
-            />
-            <IconButton
-                icon="close-circle"
-                size={20}
-                iconColor='white'
-                style={tw`absolute top--2 right--2`}
-                onPress={() => console.log('Icon pressed')}
             />
             <View style={tw`flex-row justify-start items-center`}>
                 <Icon source="account-box" size={40} color='white' />
