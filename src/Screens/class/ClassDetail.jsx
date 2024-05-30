@@ -11,6 +11,7 @@ import FancyTable from 'react-native-fancy-table';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import CustomImagePickerModal from '../../Components/CustomImagePickerModal';
+import { getClass } from './ProfileScreen';
 
 
 
@@ -120,7 +121,7 @@ const ClassDetail = ({ route }) => {
                 <PaperProvider>
                     {/* Class Name */}
                     <View style={tw`mb-4`}>
-                        <Text style={tw`text-2xl font-bold text-center`}>{detail.id}th Grade</Text>
+                        <Text style={tw`text-2xl font-bold text-center`}>Grade: {getClass(detail.id)}</Text>
                     </View>
 
                     {/* Teacher Details */}
@@ -132,7 +133,7 @@ const ClassDetail = ({ route }) => {
                                 style={tw`mr-4`}
                             />
                             <View style={tw`flex-1`}>
-                                <Text style={tw`text-lg font-bold`}>{teacherInfo.name}</Text>
+                                <Text style={tw`text-lg font-bold`}>{teacherInfo?.name|| "No assigned" }</Text>
                                 <Text>Teacher</Text>
                             </View>
                             <IconButton

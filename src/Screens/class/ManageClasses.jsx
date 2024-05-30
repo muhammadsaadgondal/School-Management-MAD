@@ -6,11 +6,36 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import tw from 'twrnc';
 import AnnouncementCard from '../../Components/AnnouncementCard'
 import ElevatedCards from '../../Components/ElevatedCard'
-import { getAllClasses } from '../../firebase/handlers/getAllClasses'
+import { getAllClasses } from '../../firebase/handlers/Class'
 
 
 
-
+const getClass = (id) => {
+    switch (id) {
+        case '0':
+            return 'Nursery';
+        case '1':
+            return 'Prep';
+        case '2':
+            return '1';
+        case '3':
+            return '2';
+        case '4':
+            return '3';
+        case '5':
+            return '4';
+        case '6':
+            return '5';
+        case '7':
+            return '6';
+        case '8':
+            return '7';
+        case '9':
+            return '8';
+        default:
+            return '';
+    }
+};
 
 
 const ManageClasses = ({ navigation }) => {
@@ -25,7 +50,8 @@ const ManageClasses = ({ navigation }) => {
                 const classes = await getAllClasses(); // Wait for the result
                 setData(classes);
                 console.log("Classes data fetched");
-                console.log(classes); // Log the fetched classes
+                setFilteredClasses(classes);
+                // console.log(classes); // Log the fetched classes
             } catch (error) {
                 console.error("Error:", error);
             }
@@ -43,17 +69,24 @@ const ManageClasses = ({ navigation }) => {
 
     // Function to handle search query change
     const handleSearch = (query) => {
+        console.log("Query: ", query);
         setSearchQuery(query);
-        const filtered = listedClasses.filter(item =>
-            item.grade.toLowerCase().includes(query.toLowerCase())
+        const filtered = classData.filter(sClass =>
+            getClass(sClass.id).toLowerCase().includes(query.toLowerCase())
         );
         setFilteredClasses(filtered);
     };
 
+    const addNewClassHandler = () => {
+
+        alert("You can't add more than 10 classes.");
+
+    }
+
     return (
         <ScrollView style={tw`bg-white h-full`}>
             <View style={tw`p-4 mt-4 ml-4 mr-4 flex-row justify-between items-center `}>
-                <Text style={tw`text-xl font-bold text-indigo-700`}>SMS</Text>
+                <Text style={tw`text-xl font-bold text-indigo-700`}>Legen wait for it dary School</Text>
                 <Icon
                     source="eye-settings"
                     color={tw.color('indigo-700')}
@@ -72,11 +105,14 @@ const ManageClasses = ({ navigation }) => {
                     icon='plus-box'
                     size={25}
                     iconColor={tw.color('indigo-700')}
-                    onPress={() => {}}/* navigation.navigate("RegisterScreen", { navigation })} */ />
+                    onPress={() => {
+                        addNewClassHandler()
+                        // navigation.navigate("RegisterScreen", { navigation })
+                    }} />
             </View>
 
 
-            {classData.map((classItem) => (
+            {filteredClasses.map((classItem) => (
                 <InfoCard key={classItem.id} data={classItem} navigation={navigation} />
             ))}
 
