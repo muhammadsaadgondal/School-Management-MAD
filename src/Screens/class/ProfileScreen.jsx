@@ -39,7 +39,7 @@ export const getClass = (id) => {
 
 
 const ProfileScreen = ({ route, navigation }) => {
-  const { profileType, profileData, gradeTeaching } = route.params;
+  const { profileType, profileData,gradeTeaching } = route.params;
 
   // const profileType, profileData, gradeTeaching
   
@@ -52,7 +52,7 @@ const ProfileScreen = ({ route, navigation }) => {
           <View style={tw`items-center`}>
             <Avatar.Image
               size={100}
-              source={{ url: 'https://via.placeholder.com/150' }}
+              source={{ uri: profileData.image || 'https://via.placeholder.com/150' }}
               style={tw`mb-4`}
             />
             <Text style={tw`text-2xl font-bold text-indigo-800 mb-2`}>
