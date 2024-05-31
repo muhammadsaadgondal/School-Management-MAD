@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   Text,
   SafeAreaView,
@@ -7,46 +7,81 @@ import {
   ImageBackground,
   Alert,
 } from 'react-native';
-
 import { RadioButton, TextInput, Button } from 'react-native-paper';
-
-export default function App() {
-  const [checked, setChecked] = useState('admin');
+import firestore from '@react-native-firebase/firestore';
+import { AuthContext } from '../auth/AuthContext';
+import { useNavigation } from '@react-navigation/native';
+export default function LoginScreen() {
+  const navigation = useNavigation();
+  const [checked, setChecked] = useState('Admin');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const record = {
-    admin :{
-      'username':"admin",
-      'password':'admin'
-    },
-    student:{
-      'username':'student',
-      'password':'stdpwd'
-    },
-    teacher:{
-      'username':"teacher",
-      'password':'thrpwd'
-    }
-  }
-  const handleSignIn = () => {
-    if(record[checked]['username'] === username && record[checked]['password'] === password){
-      console.log('Done')
-    }
-    else{
-      createTwoButtonAlert()
+  const { setUser } = useContext(AuthContext);
+
+  const handleSignIn = async () => {
+    try {
+      let storedUsername = '';
+      let storedPassword = '';
+      let data = '';
+      let actor = '';
+
+      if (checked === 'Admin') {
+        const adminDoc = await firestore().collection('admin').get();
+        if (!adminDoc.empty) {
+          storedUsername = adminDoc.docs[0].data().username;
+          storedPassword = adminDoc.docs[0].data().password;
+          actor = 'Admin';
+          data = adminDoc.docs[0].data();
+        }
+      } else if (checked === 'Teacher') {
+        const teacherDoc = await firestore().collection('Teacher').where('loginCred.email', '==', username).limit(1).get();
+        if (!teacherDoc.empty) {
+          storedUsername = teacherDoc.docs[0].data().loginCred.email;
+          storedPassword = teacherDoc.docs[0].data().loginCred.password;
+          actor = 'Teacher';
+          data = teacherDoc.docs[0].data();
+        }
+      } else if (checked === 'Student') {
+        const studentDoc = await firestore().collection('Student').doc(username.toString()).get();
+        if (studentDoc.exists) {
+          storedUsername = studentDoc.data().regNo;
+          storedPassword = studentDoc.data().loginCred.password;
+          actor = 'Student';
+          data = studentDoc.data();
+        }
+      }
+
+      if (storedUsername === username && storedPassword === password) {
+        console.log('Signed in successfully');
+        setUser({ actor, data });
+        Alert.alert('Sign in Success', 'You have successfully signed in.');
+        if (actor === 'Admin') {
+          navigation.navigate('AdminDashboard');
+        } else if (actor === 'Teacher') {
+          navigation.navigate('MarksScreen');
+        } else if (actor === 'Student') {
+          navigation.navigate('MarksScreen');
+        }
+      } else {
+        console.log('Invalid credentials');
+        Alert.alert('Sign in Error', 'Invalid credentials. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error signing in:', error);
+      Alert.alert('Sign in Error', 'An error occurred. Please try again later.');
     }
   };
 
   const createTwoButtonAlert = () =>
-    Alert.alert('Sign in Error', 'You credentials are not correct', [
+    Alert.alert('Sign in Error', 'Your credentials are not correct', [
       {
         text: 'Try Again',
-        onPress: ()=> {
-          setUsername(u => u="");
-          setPassword(p => p="");
+        onPress: () => {
+          setUsername('');
+          setPassword('');
         },
         style: 'ok',
-      }
+      },
     ]);
 
   return (
@@ -56,7 +91,8 @@ export default function App() {
           uri: 'https://rgsoftwares.com/wp-content/uploads/2021/07/school.png',
         }}
         style={styles.container}
-        blurRadius={30}>
+        blurRadius={30}
+      >
         <View style={styles.header}>
           <Text style={styles.headerText}>Login</Text>
         </View>
@@ -65,21 +101,21 @@ export default function App() {
           <View style={styles.choicesContainer}>
             <Text style={styles.choices}>Admin</Text>
             <RadioButton
-              value="admin"
-              status={checked === 'admin' ? 'checked' : 'unchecked'}
-              onPress={() => setChecked('admin')}
+              value="Admin"
+              status={checked === 'Admin' ? 'checked' : 'unchecked'}
+              onPress={() => setChecked('Admin')}
             />
             <Text style={styles.choices}>Teacher</Text>
             <RadioButton
-              value="teacher"
-              status={checked === 'teacher' ? 'checked' : 'unchecked'}
-              onPress={() => setChecked('teacher')}
+              value="Teacher"
+              status={checked === 'Teacher' ? 'checked' : 'unchecked'}
+              onPress={() => setChecked('Teacher')}
             />
             <Text style={styles.choices}>Student</Text>
             <RadioButton
-              value="student"
-              status={checked === 'student' ? 'checked' : 'unchecked'}
-              onPress={() => setChecked('student')}
+              value="Student"
+              status={checked === 'Student' ? 'checked' : 'unchecked'}
+              onPress={() => setChecked('Student')}
             />
           </View>
 
@@ -104,7 +140,7 @@ export default function App() {
           </View>
 
           <View style={styles.buttonContainer}>
-            <Button  onPress={handleSignIn}>Sign In</Button>
+            <Button onPress={handleSignIn}>Sign In</Button>
           </View>
         </View>
       </ImageBackground>
@@ -165,7 +201,6 @@ const styles = StyleSheet.create({
   main: {
     flex: 4,
     gap: 30,
-    // justifyContent: 'center',
     alignItems: 'center',
   },
 });
