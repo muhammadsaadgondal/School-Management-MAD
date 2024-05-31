@@ -57,11 +57,13 @@ export default function LoginScreen({navigation}) {
 
         // Navigate to the appropriate screen based on the actor
         if (actor === 'Admin') {
-          navigation.navigate('HomeTabs');
+          navigation.navigate('AdminTabs');
         } else if (actor === 'Teacher') {
-          navigation.navigate('TeacherScreen');
+          
+          navigation.navigate('TeacherTabs');
         } else if (actor === 'Student') {
-          navigation.navigate('StudentScreen');
+          
+          navigation.navigate('StudentTabs');
         }
       } else {
         console.log('Invalid credentials');

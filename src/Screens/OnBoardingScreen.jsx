@@ -1,26 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Text, Image, StatusBar } from "react-native";
 import AppIntroSlider from "react-native-app-intro-slider";
 
-
 const COLORS = {
-    primary: '#f52d56',
-    title: '#072F4A',
-    white: '#FFFFFF',
-    lightGrey: '#D3D6D6',
-    grey: '#C1C0C9',
-    blue: '#087BB6',
-    yellow: '#F4D03F',
+    primary: '#4B0082', // Indigo-700
+    black: '#000000',
 };
 
 export const SIZES = {
     h1: 22,
-    h2: 20,
-    h3: 18,
     h4: 16,
-    h5: 14,
-    h6: 12,
 }
+
 const slides = [
     {
         id: 1,
@@ -52,7 +43,7 @@ export default function OnBoardingScreen({ setShowHomePage}) {
                 padding: 12
             }}>
                 <Text style={{
-                    color: COLORS.white,
+                    color: COLORS.black,
                     fontWeight: '600',
                     fontSize: SIZES.h4,
                 }}>
@@ -62,19 +53,18 @@ export default function OnBoardingScreen({ setShowHomePage}) {
         )
     }
 
-    
-        return (
-            <AppIntroSlider
-                data={slides}
-                renderItem={({ item }) => {
-                    return (
-                        <View style={{
-                            flex: 1,
-                            alignItems: 'center',
-                            padding: 15,
-                            paddingTop: 100,
-                        }}>
-                            <Image
+    return (
+        <AppIntroSlider
+            data={slides}
+            renderItem={({ item }) => {
+                return (
+                    <View style={{
+                        flex: 1,
+                        alignItems: 'center',
+                        padding: 15,
+                        paddingTop: 100,
+                    }}>
+                        <Image
                             source={{ uri: item.image }}
                             style={{
                                 width: 300,
@@ -82,35 +72,34 @@ export default function OnBoardingScreen({ setShowHomePage}) {
                             }}
                             resizeMode="contain"
                         />
-                            <Text style={{
-                                fontWeight: 'bold',
-                                color: COLORS.white,
-                                fontSize: SIZES.h1,
-                            }}>
-                                {item.title}
-                            </Text>
-                            <Text style={{
-                                textAlign: 'center',
-                                paddingTop: 5,
-                                color: COLORS.white
-                            }}>
-                                {item.description}
-                            </Text>
-                        </View>
-                    )
-                }}
-                activeDotStyle={{
-                    backgroundColor: COLORS.white,
-                    width: 30,
-                }}
-                showSkipButton
-                renderNextButton={() => buttonLabel("Next")}
-                renderSkipButton={() => buttonLabel("Skip")}
-                renderDoneButton={() => buttonLabel("Done")}
-                onDone={() => {
-                    setShowHomePage(true);
-                }}
-            />
-        )
-   
+                        <Text style={{
+                            fontWeight: 'bold',
+                            color: COLORS.black,
+                            fontSize: SIZES.h1,
+                        }}>
+                            {item.title}
+                        </Text>
+                        <Text style={{
+                            textAlign: 'center',
+                            paddingTop: 5,
+                            color: COLORS.black
+                        }}>
+                            {item.description}
+                        </Text>
+                    </View>
+                )
+            }}
+            activeDotStyle={{
+                backgroundColor: COLORS.black,
+                width: 30,
+            }}
+            showSkipButton
+            renderNextButton={() => buttonLabel("Next")}
+            renderSkipButton={() => buttonLabel("Skip")}
+            renderDoneButton={() => buttonLabel("Done")}
+            onDone={() => {
+                setShowHomePage();
+            }}
+        />
+    )
 }
