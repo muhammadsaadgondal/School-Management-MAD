@@ -1,6 +1,5 @@
-const {firestore} = require('../firebase/firestore');
-
-const db = firestore;
+import firestore from '@react-native-firebase/firestore';
+const db = firestore();
 
 const writeNotification = async (title, message, classId, visibleTill) => {
     const notification = notification(title, message, classId, visibleTill);

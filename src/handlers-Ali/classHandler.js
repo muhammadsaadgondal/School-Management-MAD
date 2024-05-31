@@ -1,5 +1,5 @@
-const {firestore} = require('../firebase/firestore');
-const db = firestore;
+import firestore from '@react-native-firebase/firestore'
+const db = firestore();
 
 const subjects = {
     "0": ['English', 'Urdu', 'Mathematics', 'Nazra-e-Quran'],

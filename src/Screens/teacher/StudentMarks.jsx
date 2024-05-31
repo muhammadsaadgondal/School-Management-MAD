@@ -12,7 +12,7 @@ const StudentMarks = () => {
     { firstTerm: 0, name: 'Computer Science', midTerm: 0, finalTerm: 0 }
   ]);
   const [editable, setEditable] = useState(null);
-  const [originalSubjects, setOriginalSubjects] = useState([...subjects]);
+  const [originalSubjects, setOriginalSubjects] = useState(JSON.parse(JSON.stringify(subjects)));
 
   const handleUpdate = (index) => {
     setEditable(null);

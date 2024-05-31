@@ -81,3 +81,23 @@ const App = () => {
 
 
 export default App;
+
+// import React from 'react';
+// import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+// import StudentList from './src/Screens/teacher/ClassView'; 
+
+// const App = () => {
+//   return (
+//     <SafeAreaView style={styles.container}>
+//       <StudentList teacherId="t5" />
+//     </SafeAreaView>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//   },
+// });
+
+// export default App;

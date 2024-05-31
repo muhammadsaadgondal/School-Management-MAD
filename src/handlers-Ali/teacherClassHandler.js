@@ -1,17 +1,16 @@
-const {firestore} = require('../firebase/firestore');
-const db = firestore;
+import firestore from '@react-native-firebase/firestore'
 
 const {getStudent} = require('./studentHandler');
 
 async function getTeacherClass(teacherId) {
-    const classRef = db.collection('Class').where('tid', '==', teacherId);
+    const classRef = firestore().collection('Class').where('tid', '==', teacherId);
     const snapshot = await classRef.get();
     return snapshot.docs.map(doc => doc.data());
 }
 
 async function getTeacherStudents(teacherId) {
     try {
-        const classRef = db.collection('Class').where('tid', '==', teacherId);
+        const classRef = firestore().collection('Class').where('tid', '==', teacherId);
         const classSnapshot = await classRef.get();
 
         if (classSnapshot.empty) {
@@ -22,7 +21,7 @@ async function getTeacherStudents(teacherId) {
         const classData = classSnapshot.docs[0].data();
         const classId = classData.id.toString();
 
-        const studentsSnapshot = await db.collection('Student').where('regNo', '>=', classId + '00')
+        const studentsSnapshot = await firestore().collection('Student').where('regNo', '>=', classId + '00')
                                                        .where('regNo', '<', (parseInt(classId) + 1).toString() + '00')
                                                        .get();
 
@@ -31,9 +30,8 @@ async function getTeacherStudents(teacherId) {
             return [];
         }
 
-        const students = studentsSnapshot.docs.map(doc => doc.data());
-
-        return students.map(student => {
+        let students = studentsSnapshot.docs.map(doc => doc.data());
+        students = students.map(student => {
             const activeSession = student.session.find(s => s.status === 'Active' && s.class == classId);
             return {
                 regNo: student.regNo,
@@ -42,6 +40,7 @@ async function getTeacherStudents(teacherId) {
                 session: activeSession ? activeSession : null,
             }
         });
+        return students.filter(student => student.session);
     } catch (error) {
         console.error(`Error fetching students for teacher ID ${teacherId}:`, error);
         throw error;
@@ -74,7 +73,7 @@ async function updateMarks(regNo, subjectName, marks) {
         }
 
         // Update the student data back to the database
-        const studentRef = db.collection('Student').doc(regNo.toString());
+        const studentRef = firestore().collection('Student').doc(regNo.toString());
         await studentRef.update(student);
 
         console.log(`Marks updated successfully for student with regNo ${regNo} in subject ${subjectName}`);
