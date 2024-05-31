@@ -23,87 +23,83 @@ const App = () => {
   return (
     <AuthProvider>
       <NavigationContainer>
-        {!showHomePage ? (
-          <LoginScreen setShowHomePage={homePageStateHandler} />
-        ) : (
-          <Tab.Navigator
-            screenOptions={{
-              headerShown: false,
-              tabBarShowLabel: false, // Hide labels
+        <Tab.Navigator
+          screenOptions={{
+            headerShown: false,
+            tabBarShowLabel: false, // Hide labels
+          }}
+        >
+          {!showHomePage ? (
+            <Tab.Screen name="Login" options={{ tabBarVisible: false }}>
+              {(props) => <LoginScreen {...props} setShowHomePage={homePageStateHandler} />}
+            </Tab.Screen>
+          ) : (
+            <>
+              <Tab.Screen name="ClassNavigation" component={ClassNavigation} />
+              <Tab.Screen name="StudentNavigation" component={StudentNavigation} />
+              <Tab.Screen name="DashboardNavigation" component={DashboardNavigation} />
+              <Tab.Screen name="UserStudentNavigation" component={UserStudentNavigation} />
+              <Tab.Screen name="TeacherNavigator" component={TeacherNavigator} />
+            </>
+          )}
+
+          <Tab.Screen
+            name="StudentNavigation"
+            component={StudentNavigation}
+            options={{
+              tabBarIcon: ({ focused }) => (
+                <IconButton
+                  style={tw`bg-${focused ? 'red-300' : 'white'}`}
+                  icon="account-supervisor-circle"
+                  size={20}
+                  iconColor="red" // Change icon color based on focus
+                />
+              ),
             }}
-          >
-            <Tab.Screen
-              name="ClassNavigation"
-              component={ClassNavigation}
-              options={{
-                tabBarIcon: ({ focused }) => (
-                  <IconButton
-                    style={tw`bg-${focused ? 'red-300' : 'white'}`}
-                    icon="account-supervisor-circle"
-                    size={20}
-                    iconColor="red" // Change icon color based on focus
-                  />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name="StudentNavigation"
-              component={StudentNavigation}
-              options={{
-                tabBarIcon: ({ focused }) => (
-                  <IconButton
-                    style={tw`bg-${focused ? 'red-300' : 'white'}`}
-                    icon="account-supervisor-circle"
-                    size={20}
-                    iconColor="red" // Change icon color based on focus
-                  />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name="DashboardNavigation"
-              component={DashboardNavigation}
-              options={{
-                tabBarIcon: ({ focused }) => (
-                  <IconButton
-                    style={tw`bg-${focused ? 'red-300' : 'white'}`}
-                    icon="account-supervisor-circle"
-                    size={20}
-                    iconColor="red" // Change icon color based on focus
-                  />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name="UserStudentNavigation"
-              component={UserStudentNavigation}
-              options={{
-                tabBarIcon: ({ focused }) => (
-                  <IconButton
-                    style={tw`bg-${focused ? 'red-300' : 'white'}`}
-                    icon="account-supervisor-circle"
-                    size={20}
-                    iconColor="red" // Change icon color based on focus
-                  />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name="TeacherNavigator"
-              component={TeacherNavigator}
-              options={{
-                tabBarIcon: ({ focused }) => (
-                  <IconButton
-                    style={tw`bg-${focused ? 'red-300' : 'white'}`}
-                    icon="account-supervisor-circle"
-                    size={20}
-                    iconColor="red" // Change icon color based on focus
-                  />
-                ),
-              }}
-            />
-          </Tab.Navigator>
-        )}
+          />
+          <Tab.Screen
+            name="DashboardNavigation"
+            component={DashboardNavigation}
+            options={{
+              tabBarIcon: ({ focused }) => (
+                <IconButton
+                  style={tw`bg-${focused ? 'red-300' : 'white'}`}
+                  icon="account-supervisor-circle"
+                  size={20}
+                  iconColor="red" // Change icon color based on focus
+                />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="UserStudentNavigation"
+            component={UserStudentNavigation}
+            options={{
+              tabBarIcon: ({ focused }) => (
+                <IconButton
+                  style={tw`bg-${focused ? 'red-300' : 'white'}`}
+                  icon="account-supervisor-circle"
+                  size={20}
+                  iconColor="red" // Change icon color based on focus
+                />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="TeacherNavigator"
+            component={TeacherNavigator}
+            options={{
+              tabBarIcon: ({ focused }) => (
+                <IconButton
+                  style={tw`bg-${focused ? 'red-300' : 'white'}`}
+                  icon="account-supervisor-circle"
+                  size={20}
+                  iconColor="red" // Change icon color based on focus
+                />
+              ),
+            }}
+          />
+        </Tab.Navigator>
       </NavigationContainer>
     </AuthProvider>
   );
