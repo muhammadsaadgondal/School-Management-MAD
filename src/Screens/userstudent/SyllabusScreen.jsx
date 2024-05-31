@@ -41,13 +41,14 @@ const SyllabusScreen = () => {
     <View>
       <Text>Syllabus Screen</Text>
       {syllabusUrl ? (
-        <WebView source={{ uri: syllabusUrl }} />
+        <TouchableOpacity onPress={openSyllabusUrl}>
+          <Text>View Syllabus</Text>
+        </TouchableOpacity>
       ) : (
         <Text>No syllabus available</Text>
       )}
     </View>
   );
-  
 };
 
 export default SyllabusScreen;
