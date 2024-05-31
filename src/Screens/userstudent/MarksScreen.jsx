@@ -27,7 +27,7 @@ const MarksScreen = () => {
         renderItem={({ item }) => (
           <View>
             <Text style={styles.studentName}>{item.name}</Text>
-            {item.session.subjects.map((subject, index) => (
+            {item.session && item.session.subjects && item.session.subjects.map((subject, index) => (
               <Text key={index} style={styles.subject}>
                 {subject.name}: MidTerm: {subject.midTerm}, FirstTerm: {subject.firstTerm}, FinalTerm: {subject.finalTerm}
               </Text>
