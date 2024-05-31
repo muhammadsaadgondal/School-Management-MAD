@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     SafeAreaView,
     ScrollView,
@@ -11,8 +11,10 @@ import {
 } from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import { getTeacherStudents } from '../../handlers-Ali/teacherClassHandler';
+import { AuthContext } from '../../auth/AuthContext';
 
-const StudentList = ({ navigation, teacherId }) => {
+const StudentList = ({navigation }) => {
+    const { user } = useContext(AuthContext);
     const [students, setStudents] = useState([]);
     const [className, setClassName] = useState('N/A');
     const [loading, setLoading] = useState(true);
@@ -20,7 +22,7 @@ const StudentList = ({ navigation, teacherId }) => {
     useEffect(() => {
         const fetchStudents = async () => {
             try {
-                const studentsData = await getTeacherStudents(teacherId);
+                const studentsData = await getTeacherStudents(user.data);
                 console.log('Fetched students data:', studentsData); // Debug log
                 setStudents(studentsData);
                 
@@ -36,7 +38,7 @@ const StudentList = ({ navigation, teacherId }) => {
         };
 
         fetchStudents();
-    }, [teacherId]);
+    }, [user.data]);
 
     if (loading) {
         return (

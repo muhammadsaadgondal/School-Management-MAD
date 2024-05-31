@@ -12,6 +12,10 @@ import TeacherNavigator from './src/navigators/TeacherNavigator';
 import LoginScreen from './src/Screens/LoginScreen';
 import { AuthProvider } from './src/auth/AuthContext';
 import OnBoardingScreen from './src/Screens/OnBoardingScreen';
+import ClassView from './src/Screens/teacher/ClassView';
+import StudentMarks from './src/Screens/teacher/StudentMarks';
+
+
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -24,6 +28,17 @@ const AdminTabs = () => (
     }}
   >
 
+    <Tab.Screen name="DashboardNavigation" component={DashboardNavigation} options={{
+      tabBarIcon: ({ focused }) => (
+        <IconButton
+          style={tw`bg-${focused ? 'red-300' : 'white'}`}
+          icon="account-supervisor-circle"
+          size={20}
+          iconColor="red" // Change icon color based on focus
+        />
+      ),
+    }} />
+
     <Tab.Screen name="ClassNavigation" component={ClassNavigation} options={{
       tabBarIcon: ({ focused }) => (
         <IconButton
@@ -44,36 +59,7 @@ const AdminTabs = () => (
         />
       ),
     }} />
-    <Tab.Screen name="DashboardNavigation" component={DashboardNavigation} options={{
-      tabBarIcon: ({ focused }) => (
-        <IconButton
-          style={tw`bg-${focused ? 'red-300' : 'white'}`}
-          icon="account-supervisor-circle"
-          size={20}
-          iconColor="red" // Change icon color based on focus
-        />
-      ),
-    }} />
-    <Tab.Screen name="UserStudentNavigation" component={UserStudentNavigation} options={{
-      tabBarIcon: ({ focused }) => (
-        <IconButton
-          style={tw`bg-${focused ? 'red-300' : 'white'}`}
-          icon="account-supervisor-circle"
-          size={20}
-          iconColor="red" // Change icon color based on focus
-        />
-      ),
-    }} />
-    <Tab.Screen name="TeacherNavigator" component={TeacherNavigator} options={{
-      tabBarIcon: ({ focused }) => (
-        <IconButton
-          style={tw`bg-${focused ? 'red-300' : 'white'}`}
-          icon="account-supervisor-circle"
-          size={20}
-          iconColor="red" // Change icon color based on focus
-        />
-      ),
-    }} />
+
   </Tab.Navigator>
 );
 
@@ -84,8 +70,7 @@ const TeacherTabs = () => (
       tabBarShowLabel: false, // Hide labels
     }}
   >
-
-    <Tab.Screen name="ClassNavigation" component={ClassNavigation} options={{
+    <Tab.Screen name="Class" component={ClassView} options={{
       tabBarIcon: ({ focused }) => (
         <IconButton
           style={tw`bg-${focused ? 'red-300' : 'white'}`}
@@ -94,8 +79,9 @@ const TeacherTabs = () => (
           iconColor="red" // Change icon color based on focus
         />
       ),
-    }} />
-    <Tab.Screen name="StudentNavigation" component={StudentNavigation} options={{
+    }}
+    />
+    <Tab.Screen name="StudentMarks" component={StudentMarks} options={{
       tabBarIcon: ({ focused }) => (
         <IconButton
           style={tw`bg-${focused ? 'red-300' : 'white'}`}
@@ -104,37 +90,8 @@ const TeacherTabs = () => (
           iconColor="red" // Change icon color based on focus
         />
       ),
-    }} />
-    <Tab.Screen name="DashboardNavigation" component={DashboardNavigation} options={{
-      tabBarIcon: ({ focused }) => (
-        <IconButton
-          style={tw`bg-${focused ? 'red-300' : 'white'}`}
-          icon="account-supervisor-circle"
-          size={20}
-          iconColor="red" // Change icon color based on focus
-        />
-      ),
-    }} />
-    <Tab.Screen name="UserStudentNavigation" component={UserStudentNavigation} options={{
-      tabBarIcon: ({ focused }) => (
-        <IconButton
-          style={tw`bg-${focused ? 'red-300' : 'white'}`}
-          icon="account-supervisor-circle"
-          size={20}
-          iconColor="red" // Change icon color based on focus
-        />
-      ),
-    }} />
-    <Tab.Screen name="TeacherNavigator" component={TeacherNavigator} options={{
-      tabBarIcon: ({ focused }) => (
-        <IconButton
-          style={tw`bg-${focused ? 'red-300' : 'white'}`}
-          icon="account-supervisor-circle"
-          size={20}
-          iconColor="red" // Change icon color based on focus
-        />
-      ),
-    }} />
+    }}
+    />
   </Tab.Navigator>
 );
 
@@ -146,47 +103,7 @@ const StudentTabs = () => (
     }}
   >
 
-    <Tab.Screen name="ClassNavigation" component={ClassNavigation} options={{
-      tabBarIcon: ({ focused }) => (
-        <IconButton
-          style={tw`bg-${focused ? 'red-300' : 'white'}`}
-          icon="account-supervisor-circle"
-          size={20}
-          iconColor="red" // Change icon color based on focus
-        />
-      ),
-    }} />
-    <Tab.Screen name="StudentNavigation" component={StudentNavigation} options={{
-      tabBarIcon: ({ focused }) => (
-        <IconButton
-          style={tw`bg-${focused ? 'red-300' : 'white'}`}
-          icon="account-supervisor-circle"
-          size={20}
-          iconColor="red" // Change icon color based on focus
-        />
-      ),
-    }} />
-    <Tab.Screen name="DashboardNavigation" component={DashboardNavigation} options={{
-      tabBarIcon: ({ focused }) => (
-        <IconButton
-          style={tw`bg-${focused ? 'red-300' : 'white'}`}
-          icon="account-supervisor-circle"
-          size={20}
-          iconColor="red" // Change icon color based on focus
-        />
-      ),
-    }} />
     <Tab.Screen name="UserStudentNavigation" component={UserStudentNavigation} options={{
-      tabBarIcon: ({ focused }) => (
-        <IconButton
-          style={tw`bg-${focused ? 'red-300' : 'white'}`}
-          icon="account-supervisor-circle"
-          size={20}
-          iconColor="red" // Change icon color based on focus
-        />
-      ),
-    }} />
-    <Tab.Screen name="TeacherNavigator" component={TeacherNavigator} options={{
       tabBarIcon: ({ focused }) => (
         <IconButton
           style={tw`bg-${focused ? 'red-300' : 'white'}`}
@@ -205,7 +122,7 @@ const StudentTabs = () => (
 
 const App = () => {
   const [showHomePage, setShowHomePage] = useState(false);
-  const [showBoardingScreen, setShowBoardingScreen] = useState(true);
+  const [showBoardingScreen, setShowBoardingScreen] = useState(false);
 
 
   const homePageStateHandler = () => {
@@ -215,7 +132,7 @@ const App = () => {
     setShowBoardingScreen(false);
   }
 
-  if(showBoardingScreen){
+  if (showBoardingScreen) {
     return <OnBoardingScreen setShowHomePage={loginPageStateHandler} />
   }
 

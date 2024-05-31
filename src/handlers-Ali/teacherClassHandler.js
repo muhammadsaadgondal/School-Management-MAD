@@ -82,4 +82,4 @@ async function updateMarks(regNo, subjectName, marks) {
     }
 }
 
-module.exports = { getTeacherClass, getTeacherStudents, updateMarks };
+export { getTeacherClass, getTeacherStudents, updateMarks };

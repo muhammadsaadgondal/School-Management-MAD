@@ -11,18 +11,18 @@ import { RadioButton, TextInput, Button } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import { AuthContext } from '../auth/AuthContext';
 
-export default function LoginScreen({navigation}) {
+export default function LoginScreen({ navigation }) {
   const [checked, setChecked] = useState('Admin');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('khattak@example.com');
+  const [password, setPassword] = useState('password123');
   const { setUser } = useContext(AuthContext);
 
   const handleSignIn = async () => {
     try {
       let storedUsername = '';
       let storedPassword = '';
-      let data = '';
-      let actor = '';
+      var data = '';
+      var actor = '';
 
       if (checked === 'Admin') {
         const adminDoc = await firestore().collection('admin').get();
@@ -38,8 +38,12 @@ export default function LoginScreen({navigation}) {
           storedUsername = teacherDoc.docs[0].data().loginCred.email;
           storedPassword = teacherDoc.docs[0].data().loginCred.password;
           actor = 'Teacher';
-          data = teacherDoc.docs[0].data();
+          data = teacherDoc.docs[0].id;
+
+
+
         }
+
       } else if (checked === 'Student') {
         const studentDoc = await firestore().collection('Student').doc(username.toString()).get();
         if (studentDoc.exists) {
@@ -53,16 +57,20 @@ export default function LoginScreen({navigation}) {
       if (storedUsername === username && storedPassword === password) {
         console.log('Signed in successfully');
         setUser({ actor, data });
+        console.log('====================================');
+        console.log('User:', actor);
+        console.log('Data:', data);
+        console.log('====================================');
         Alert.alert('Sign in Success', 'You have successfully signed in.');
 
         // Navigate to the appropriate screen based on the actor
         if (actor === 'Admin') {
           navigation.navigate('AdminTabs');
         } else if (actor === 'Teacher') {
-          
+
           navigation.navigate('TeacherTabs');
         } else if (actor === 'Student') {
-          
+
           navigation.navigate('StudentTabs');
         }
       } else {

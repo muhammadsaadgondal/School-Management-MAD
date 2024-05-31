@@ -1,37 +1,52 @@
 import React, { useState } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { Card, TextInput, Button, Title } from 'react-native-paper';
+import { updateMarks } from '../../handlers-Ali/teacherClassHandler';
 
-const StudentMarks = () => {
-  const [subjects, setSubjects] = useState([
-    { firstTerm: 10, name: 'English', midTerm: 10, finalTerm: 10 },
-    { firstTerm: 0, name: 'Urdu', midTerm: 0, finalTerm: 0 },
-    { firstTerm: 0, name: 'Mathematics', midTerm: 0, finalTerm: 0 },
-    { firstTerm: 0, name: 'General Knowledge', midTerm: 0, finalTerm: 0 },
-    { firstTerm: 0, name: 'Islamiat', midTerm: 0, finalTerm: 0 },
-    { firstTerm: 0, name: 'Computer Science', midTerm: 0, finalTerm: 0 }
-  ]);
+
+const StudentMarks = ({route}) => {
+  const {studentId, subjects}= route.params;
+
+  const [subs, setSubs] = useState(subjects);
+
+ 
   const [editable, setEditable] = useState(null);
   const [originalSubjects, setOriginalSubjects] = useState(JSON.parse(JSON.stringify(subjects)));
 
-  const handleUpdate = (index) => {
+  const handleUpdate = async (index) => {
+    try {
+      console.log('====================================');
+      console.log('Updating marks for student:', studentId);
+      console.log('====================================');
+      const updatedSubject = subs[index];
+      await updateMarks(studentId, updatedSubject.name, {
+        firstTerm: updatedSubject.firstTerm,
+        midTerm: updatedSubject.midTerm,
+        finalTerm: updatedSubject.finalTerm,
+      });
+      // Success message or any further action after successful update
+      console.log('Marks updated successfully');
+    } catch (error) {
+      console.error('Error updating marks:', error);
+      // Handle error
+    }
     setEditable(null);
   };
 
   const handleCancel = () => {
-    setSubjects([...originalSubjects]);
+    setSubs([...originalSubjects]);
     setEditable(null);
   };
 
   const handleChange = (index, field, value) => {
     const newSubjects = [...subjects];
     newSubjects[index][field] = parseInt(value) || 0;
-    setSubjects(newSubjects);
+    setSubs(newSubjects);
   };
 
   return (
     <ScrollView style={styles.container}>
-      {subjects.map((subject, index) => (
+      {subs.map((subject, index) => (
         <Card key={index} style={styles.card}>
           <Card.Content>
             <Title>{subject.name}</Title>
