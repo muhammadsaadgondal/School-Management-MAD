@@ -10,8 +10,10 @@ import {
 import { RadioButton, TextInput, Button } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import { AuthContext } from '../auth/AuthContext';
+import { useNavigation } from '@react-navigation/native';
 
-export default function LoginScreen({ setShowHomePage }) {
+export default function LoginScreen() {
+  const navigation = useNavigation();
   const [checked, setChecked] = useState('Admin');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -54,7 +56,15 @@ export default function LoginScreen({ setShowHomePage }) {
         console.log('Signed in successfully');
         setUser({ actor, data });
         Alert.alert('Sign in Success', 'You have successfully signed in.');
-        setShowHomePage(true); // Update state to show home page
+
+        // Navigate to the appropriate screen based on the actor
+        if (actor === 'Admin') {
+          navigation.navigate('AdminDashboard');
+        } else if (actor === 'Teacher') {
+          navigation.navigate('TeacherScreen');
+        } else if (actor === 'Student') {
+          navigation.navigate('StudentScreen');
+        }
       } else {
         console.log('Invalid credentials');
         Alert.alert('Sign in Error', 'Invalid credentials. Please try again.');
@@ -64,18 +74,6 @@ export default function LoginScreen({ setShowHomePage }) {
       Alert.alert('Sign in Error', 'An error occurred. Please try again later.');
     }
   };
-
-  const createTwoButtonAlert = () =>
-    Alert.alert('Sign in Error', 'Your credentials are not correct', [
-      {
-        text: 'Try Again',
-        onPress: () => {
-          setUsername('');
-          setPassword('');
-        },
-        style: 'ok',
-      },
-    ]);
 
   return (
     <SafeAreaView style={styles.container}>
