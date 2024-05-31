@@ -14,7 +14,7 @@ import { AuthProvider } from './src/auth/AuthContext';
 const Tab = createBottomTabNavigator();
 
 const App = () => {
-  const [showHomePage, setShowHomePage] = useState(false);
+  const [showHomePage, setShowHomePage] = useState(true);
 
   const homePageStateHandler = () => {
     setShowHomePage(true);
