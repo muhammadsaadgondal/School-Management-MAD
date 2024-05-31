@@ -30,7 +30,7 @@ const UpdateStudent = () => {
     const searchStudent = async () => {
         try {
             const studentSnapshot = await firestore()
-                .collection('students')
+                .collection('Student')
                 .where('name', '==', studentName)
                 .get();
             if (!studentSnapshot.empty) {
@@ -56,21 +56,15 @@ const UpdateStudent = () => {
 
     const updateStudent = async (id) => {
         try {
-            await firestore().collection('students').doc(id).update({
+            await firestore().collection('Student').doc(id).update({
                 name: updatedName,
                 age: parseInt(updatedAge, 10),
-                registrationNumber,
-                dateOfAdmission,
-                gender,
-                fatherName,
-                occupation,
-                admissionClass,
-                email,
-                dateOfBirth,
-                caste,
-                residence,
-                password,
-                remarks,
+                "registrationNumber": registrationNumber,
+                "DoA": dateOfAdmission, // Assuming "DoA" is the field name in Firestore
+                gender: gender,
+                "father.name": fatherName, // Example of updating nested field
+                occupation: occupation,
+                // Update other fields accordingly
             });
             setStudents(students.map(student => student.id === id ? { ...student, name: updatedName, age: parseInt(updatedAge, 10) } : student));
             setEditingStudentId(null);
@@ -80,23 +74,29 @@ const UpdateStudent = () => {
         }
     };
 
+
     const startEditing = (student) => {
-        setEditingStudentId(student.id);
-        setUpdatedName(student.name);
-        setUpdatedAge(student.age ? student.age.toString() : '');
-        setRegistrationNumber(student.registrationNumber || '');
-        setDateOfAdmission(student.dateOfAdmission ? new Date(student.dateOfAdmission.seconds * 1000) : new Date());
-        setGender(student.gender || '');
-        setFatherName(student.fatherName || '');
-        setOccupation(student.occupation || '');
-        setAdmissionClass(student.admissionClass || '');
-        setEmail(student.email || '');
-        setDateOfBirth(student.dateOfBirth ? new Date(student.dateOfBirth.seconds * 1000) : new Date());
-        setCaste(student.caste || '');
-        setResidence(student.residence || '');
-        setPassword(student.password || '');
-        setRemarks(student.remarks || '');
+        if (student.id) { // Check if 'id' property exists
+            setEditingStudentId(student.id);
+            setUpdatedName(student.name);
+            setUpdatedAge(student.age ? student.age.toString() : '');
+            setRegistrationNumber(student.registrationNumber || '');
+            setDateOfAdmission(student.dateOfAdmission ? new Date(student.dateOfAdmission.seconds * 1000) : new Date());
+            setGender(student.gender || '');
+            setFatherName(student.fatherName || '');
+            setOccupation(student.occupation || '');
+            setAdmissionClass(student.admissionClass || '');
+            setEmail(student.email || '');
+            setDateOfBirth(student.dateOfBirth ? new Date(student.dateOfBirth.seconds * 1000) : new Date());
+            setCaste(student.caste || '');
+            setResidence(student.residence || '');
+            setPassword(student.password || '');
+            setRemarks(student.remarks || '');
+        } else {
+            console.error("Student object does not contain an 'id' property:", student);
+        }
     };
+    
 
     const handleDateOfAdmissionChange = (event, selectedDate) => {
         const currentDate = selectedDate || dateOfAdmission;

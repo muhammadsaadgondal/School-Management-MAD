@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Alert, View, Text, TouchableOpacity, TextInput, ScrollView, Platform, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import tw from 'twrnc';
 import { Picker } from '@react-native-picker/picker';
 import firestore from '@react-native-firebase/firestore';
 
-const AddStudents = () => {
+const AddStudentsforupdate = ({ studentData, onUpdate }) => {
   const [registrationNumber, setRegistrationNumber] = useState('');
   const [dateOfAdmission, setDateOfAdmission] = useState(new Date());
   const [name, setName] = useState('');
@@ -22,6 +22,23 @@ const AddStudents = () => {
   const [showDateOfAdmissionPicker, setShowDateOfAdmissionPicker] = useState(false);
   const [showDateOfBirthPicker, setShowDateOfBirthPicker] = useState(false);
 
+  useEffect(() => {
+    if (studentData) {
+      setRegistrationNumber(studentData.regNo.toString());
+      setDateOfAdmission(new Date(studentData.DoA));
+      setName(studentData.name);
+      setDateOfBirth(new Date(studentData.DoB));
+      setGender(studentData.gender);
+      setFatherName(studentData.father.name);
+      setCaste(studentData.father.caste);
+      setOccupation(studentData.father.occupation);
+      setResidence(studentData.father.residency);
+      setEmail(studentData.email);
+      setPassword(studentData.loginCred.password);
+      setRemarks(studentData.remarks.join(', '));
+    }
+  }, [studentData]);
+
   const handleDateOfAdmissionChange = (event, selectedDate) => {
     const currentDate = selectedDate || dateOfAdmission;
     setShowDateOfAdmissionPicker(Platform.OS === 'ios');
@@ -34,22 +51,9 @@ const AddStudents = () => {
     setDateOfBirth(currentDate);
   };
 
-  const showDateOfAdmissionPickerModal = () => {
-    setShowDateOfAdmissionPicker(true);
-  };
-
-  const showDateOfBirthPickerModal = () => {
-    setShowDateOfBirthPicker(true);
-  };
-
-  const handleAddStudent = async () => {
-    // if (!registrationNumber || !name || !gender || !fatherName || !caste || !occupation || !residence || !email || !password) {
-    //   Alert.alert('Error', 'Please fill out all fields');
-    //   return;
-    // }
-
+  const handleUpdate = async () => {
     try {
-      await firestore().collection('Student').add({
+      await onUpdate({
         regNo: parseInt(registrationNumber, 10),
         name,
         DoA: dateOfAdmission,
@@ -69,23 +73,9 @@ const AddStudents = () => {
         fee: [],
         session: [],
       });
-
-      Alert.alert('Success', 'Student added successfully');
-      // Clear the form fields
-      setRegistrationNumber('');
-      setDateOfAdmission(new Date());
-      setName('');
-      setDateOfBirth(new Date());
-      setGender('');
-      setFatherName('');
-      setCaste('');
-      setOccupation('');
-      setResidence('');
-      setEmail('');
-      setPassword('');
-      setRemarks('');
+      Alert.alert('Success', 'Student updated successfully');
     } catch (error) {
-      Alert.alert('Error', 'Failed to add student. Please try again.');
+      Alert.alert('Error', 'Failed to update student. Please try again.');
     }
   };
 
@@ -96,7 +86,7 @@ const AddStudents = () => {
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView contentContainerStyle={tw`flex-grow bg-indigo-700 p-4`}>
-          <Text style={tw`text-4xl font-bold text-center mb-8 text-white`}>Add Student</Text>
+          <Text style={tw`text-4xl font-bold text-center mb-8 text-white`}>Update Student</Text>
           <View style={tw`bg-white p-4 rounded-md shadow-md`}>
             <Text style={tw`text-xl font-bold mb-4 text-gray-800`}>Student Information</Text>
             <View style={tw`flex-row`}>
@@ -109,8 +99,8 @@ const AddStudents = () => {
                   value={registrationNumber}
                   onChangeText={setRegistrationNumber}
                 />
-                <TouchableOpacity onPress={showDateOfAdmissionPickerModal}>
-                <Text style={tw`text-xs font-bold pl-1 text-gray-800`}>DOA</Text>
+                <TouchableOpacity onPress={() => setShowDateOfAdmissionPicker(true)}>
+                  <Text style={tw`text-xs font-bold pl-1 text-gray-800`}>DOA</Text>
                   <TextInput
                     style={tw`border border-gray-300 text-black rounded-md p-2 mb-2`}
                     placeholder="Date of Admission/Registration"
@@ -135,7 +125,6 @@ const AddStudents = () => {
                   onValueChange={(itemValue) => setGender(itemValue)}
                   style={tw`border border-gray-300 rounded-md mb-4 text-black`}
                 >
-                  
                   <Picker.Item label="Select Gender" value="" />
                   <Picker.Item label="Male" value="male" />
                   <Picker.Item label="Female" value="female" />
@@ -149,8 +138,8 @@ const AddStudents = () => {
                   value={name}
                   onChangeText={setName}
                 />
-                <TouchableOpacity onPress={showDateOfBirthPickerModal}>
-                <Text style={tw`text-xs font-bold pl-1 text-gray-800`}>DOB</Text>
+                <TouchableOpacity onPress={() => setShowDateOfBirthPicker(true)}>
+                  <Text style={tw`text-xs font-bold pl-1 text-gray-800`}>DOB</Text>
                   <TextInput
                     style={tw`border border-gray-300 text-black rounded-md p-2 mb-4`}
                     placeholder="Date of Birth"
@@ -184,19 +173,19 @@ const AddStudents = () => {
                 />
                 <TextInput
                   style={tw`border border-gray-300 text-black rounded-md p-2 mb-4`}
-                  placeholder="Occupation"
+                  placeholder="Caste"
                   placeholderTextColor="gray"
-                  value={occupation}
-                  onChangeText={setOccupation}
+                  value={caste}
+                  onChangeText={setCaste}
                 />
               </View>
               <View style={tw`flex-1 pl-2`}>
                 <TextInput
                   style={tw`border border-gray-300 text-black rounded-md p-2 mb-4`}
-                  placeholder="Caste"
+                  placeholder="Occupation"
                   placeholderTextColor="gray"
-                  value={caste}
-                  onChangeText={setCaste}
+                  value={occupation}
+                  onChangeText={setOccupation}
                 />
                 <TextInput
                   style={tw`border border-gray-300 text-black rounded-md p-2 mb-4`}
@@ -208,32 +197,36 @@ const AddStudents = () => {
               </View>
             </View>
 
-            <Text style={tw`text-xl font-bold mt-4 mb-4 text-gray-800`}>Login Information</Text>
-            <View style={tw`flex-row`}>
-              <View style={tw`flex-1 pr-2`}>
-                <TextInput
-                  style={tw`border border-gray-300 text-black rounded-md p-2 mb-4`}
-                  placeholder="Email"
-                  placeholderTextColor="gray"
-                  value={email}
-                  onChangeText={setEmail}
-                />
-                <TextInput
-                  style={tw`border border-gray-300 text-black rounded-md p-2 mb-4`}
-                  placeholder="Password"
-                  placeholderTextColor="gray"
-                  secureTextEntry
-                  value={password}
-                  onChangeText={setPassword}
-                />
-              </View>
-            </View>
+            <Text style={tw`text-xl font-bold mt-4 mb-4 text-gray-800`}>Login Credentials</Text>
+            <TextInput
+              style={tw`border border-gray-300 text-black rounded-md p-2 mb-4`}
+              placeholder="Email"
+              placeholderTextColor="gray"
+              value={email}
+              onChangeText={setEmail}
+            />
+            <TextInput
+              style={tw`border border-gray-300 text-black rounded-md p-2 mb-4`}
+              placeholder="Password"
+              placeholderTextColor="gray"
+              value={password}
+              onChangeText={setPassword}
+            />
+
+            <Text style={tw`text-xl font-bold mt-4 mb-4 text-gray-800`}>Remarks</Text>
+            <TextInput
+              style={tw`border border-gray-300 text-black rounded-md p-2 mb-4`}
+              placeholder="Remarks"
+              placeholderTextColor="gray"
+              value={remarks}
+              onChangeText={setRemarks}
+            />
 
             <TouchableOpacity
-              style={tw`bg-blue-500 p-4 rounded-md mt-4`}
-              onPress={handleAddStudent}
+              style={tw`bg-indigo-600 py-3 mt-4 rounded-md`}
+              onPress={handleUpdate}
             >
-              <Text style={tw`text-white text-center text-lg`}>ADD</Text>
+              <Text style={tw`text-white text-center font-bold text-lg`}>Update Student</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -242,4 +235,5 @@ const AddStudents = () => {
   );
 };
 
-export default AddStudents;
+export default AddStudentsforupdate;
+

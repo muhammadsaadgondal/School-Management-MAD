@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import tw from 'twrnc';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import firestore from '@react-native-firebase/firestore';
+import StudentDetails from './StudentDetails';
 
 const AddFee = () => {
     const [searchStudentName, setSearchStudentName] = useState('');
@@ -16,12 +17,34 @@ const AddFee = () => {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [remarks, setRemarks] = useState('');
 
+    useEffect(() => {
+        // Calculate payable amount when amount due or amount paid changes
+        if (amountDue !== '' && amountPaid !== '') {
+            const due = parseFloat(amountDue);
+            const paid = parseFloat(amountPaid);
+            const cumulativePayable = calculateCumulativePayable(student);
+            const payable = Math.max(0, due - paid + cumulativePayable); // Ensure payable amount is non-negative
+            setPayableAmount(payable.toString());
+        }
+    }, [amountDue, amountPaid, student]);
+
+    // Function to calculate cumulative payable amount from previous fee entries
+    const calculateCumulativePayable = (student) => {
+        if (!student || !student.fee || student.fee.length === 0) {
+            return 0;
+        }
+
+        return student.fee.reduce((accumulatedPayable, feeEntry) => {
+            return accumulatedPayable + (feeEntry.payableAmount || 0);
+        }, 0);
+    };
+
     const handleSearch = async () => {
         try {
             const studentQuerySnapshot = await firestore()
-                .collection('students')
+                .collection('Student')
                 .where('name', '==', searchStudentName)
-                .where('regNo', '==', parseInt(searchRegNo, 10))
+                .where('regNo', '==', searchRegNo.trim())
                 .get();
 
             if (studentQuerySnapshot.empty) {
@@ -51,12 +74,12 @@ const AddFee = () => {
                 totalDues: parseFloat(amountDue),
                 paidAmount: parseFloat(amountPaid),
                 payableAmount: parseFloat(payableAmount),
-                status: amountPaid >= payableAmount, // Assuming status is true if paid amount is greater than or equal to payable amount
+                status: amountPaid >= payableAmount,
                 comment: remarks,
             };
 
             await firestore()
-                .collection('students')
+                .collection('Student')
                 .doc(student.id)
                 .update({
                     fee: firestore.FieldValue.arrayUnion(newFee),
@@ -100,7 +123,6 @@ const AddFee = () => {
                     style={tw`border text-black border-gray-300 rounded-md p-2 mb-4`}
                     placeholder="Registration Number"
                     placeholderTextColor="#A9A9A9"
-                    keyboardType="numeric"
                     value={searchRegNo}
                     onChangeText={setSearchRegNo}
                 />
@@ -113,17 +135,21 @@ const AddFee = () => {
             </View>
 
             {student && (
-                <View style={tw`mb-8 p-4 bg-white rounded-md shadow-md`}>
-                    <Text style={tw`text-2xl font-bold mb-4 text-gray-800`}>Student Details</Text>
-                    <Text style={tw`text-lg mb-2`}>Name: {student.name}</Text>
-                    <Text style={tw`text-lg mb-2`}>Class: {student.class}</Text>
-                    <Text style={tw`text-lg mb-2`}>Registration Number: {student.regNo}</Text>
-                </View>
+                <StudentDetails student={student} />
             )}
 
             {student && (
                 <View style={tw`p-4 bg-white rounded-md shadow-md`}>
                     <Text style={tw`text-2xl font-bold mb-4 text-gray-800`}>Add Fee</Text>
+                    <TextInput
+                        style={tw`border text-black border-gray-300 rounded-md p-2 mb-4`}
+                        placeholder="Payable Amount"
+                        placeholderTextColor="#A9A9A9"
+                        keyboardType="numeric"
+                        value={payableAmount}
+                        onChangeText={setPayableAmount}
+                        editable={false} // Make this field read-only since it's calculated
+                    />
                     <TextInput
                         style={tw`border text-black border-gray-300 rounded-md p-2 mb-4`}
                         placeholder="Amount Due"
@@ -140,14 +166,7 @@ const AddFee = () => {
                         value={amountPaid}
                         onChangeText={setAmountPaid}
                     />
-                    <TextInput
-                        style={tw`border text-black border-gray-300 rounded-md p-2 mb-4`}
-                        placeholder="Payable Amount"
-                        placeholderTextColor="#A9A9A9"
-                        keyboardType="numeric"
-                        value={payableAmount}
-                        onChangeText={setPayableAmount}
-                    />
+
                     <TouchableOpacity
                         onPress={() => setShowDatePicker(true)}
                         style={tw`border text-black border-gray-300 rounded-md p-2 mb-4`}
@@ -173,12 +192,16 @@ const AddFee = () => {
                         style={tw`bg-blue-500 p-4 rounded-md mb-4`}
                         onPress={handleSubmit}
                     >
-                        <Text style={tw`text-white text-center text-lg`}>Submit</Text>
+                        <Text style={tw`text-white text-center text-lg`}>
+                            Submit
+                        </Text>
                     </TouchableOpacity>
                 </View>
             )}
         </ScrollView>
+
     );
 };
 
 export default AddFee;
+
