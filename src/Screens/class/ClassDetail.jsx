@@ -220,23 +220,28 @@ const ClassDetail = ({ route, navigation }) => {
                         </View>
 
                         <Portal>
-                            <Modal visible={visibleP} onDismiss={hideModal} contentContainerStyle={tw`bg-white p-4 items-center justify-center max-h-230`}>
+                            <Modal visible={visibleP} contentContainerStyle={tw`bg-white p-4 justify-center items-center`}>
                                 <Text style={tw`text-xl font-bold mb-2 items-center justify-center`}>All Students</Text>
-                                <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                                    <FancyTable
-                                        headerBGColor={tw.color("indigo-400")}
-                                        headerFontColor="white"
-                                        headerFontSize={15}
-                                        bodyFontSize={13}
-                                        bodyFontColor="black"
-                                        header={header}
-                                        tableBody={students.map(({ name, regNo, DoB, gender }) => [name, regNo, new Date(DoB).toLocaleDateString(), gender])}
-                                        rowWidth={5}
-                                        borderColor={tw.color("indigo-400")}
-                                        borderWidth={0.2}
-                                        tableHeight={1}
-                                    />
-                                </ScrollView>
+                                <View style={{ height: 500,justifyContent:'center' }}> 
+                                    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                                        <FancyTable
+                                            headerBGColor={tw.color("indigo-400")}
+                                            headerFontColor="white"
+                                            headerFontSize={15}
+                                            bodyFontSize={13}
+                                            bodyFontColor="black"
+                                            header={header}
+                                            tableBody={students.map(({ id, name, regNo, DoB, gender }) => [name, regNo, new Date(DoB).toLocaleDateString(), gender])}
+                                            rowWidth={4}
+                                            borderColor={tw.color("indigo-400")}
+                                            borderWidth={0.2}
+                                            tableHeight={1}
+                                        />
+                                    </ScrollView>
+                                </View>
+                                <TouchableOpacity style={tw`bg-indigo-600 p-3 rounded-lg w-full`} onPress={hideModal}>
+                                    <Text style={tw`text-white text-center`}>Close</Text>
+                                </TouchableOpacity>
                             </Modal>
                         </Portal>
 
