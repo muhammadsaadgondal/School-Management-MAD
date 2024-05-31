@@ -36,10 +36,10 @@ const App = () => {
           options={{
             tabBarIcon: ({ focused }) => (
               <IconButton
-                style={tw`bg-${focused ? 'red-300' : 'white'}`}
+                style={tw`bg-${focused ? 'indigo-200' : 'white'}`}
                 icon="account-supervisor-circle"
                 size={20}
-                iconColor='red'// Change icon color based on focus
+                iconColor='indigo'// Change icon color based on focus
               />
             ),
           }}
@@ -50,10 +50,10 @@ const App = () => {
           options={{
             tabBarIcon: ({ focused }) => (
               <IconButton
-                style={tw`bg-${focused ? 'red-300' : 'white'}`}
+                style={tw`bg-${focused ? 'indigo-200' : 'white'}`}
                 icon="account-supervisor-circle"
                 size={20}
-                iconColor='red'// Change icon color based on focus
+                iconColor='indigo'// Change icon color based on focus
               />
             ),
           }}
@@ -64,10 +64,10 @@ const App = () => {
           options={{
             tabBarIcon: ({ focused }) => (
               <IconButton
-                style={tw`bg-${focused ? 'red-300' : 'white'}`}
+                style={tw`bg-${focused ? 'indigo-200' : 'white'}`}
                 icon="account-supervisor-circle"
                 size={20}
-                iconColor='red'// Change icon color based on focus
+                iconColor='indigo'// Change icon color based on focus
               />
             ),
           }}
