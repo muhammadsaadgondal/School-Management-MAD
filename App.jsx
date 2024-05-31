@@ -7,6 +7,7 @@ import { IconButton } from 'react-native-paper';
 import StudentNavigation from './src/navigators/StudentNavigation';
 import DashboardNavigation from './src/navigators/DashboardNavigator';
 import OnBoardingScreen from './src/Screens/OnBoardingScreen';
+import UserStudentNavigation from './src/navigators/UserStudentNavigation';
 
 const Tab = createBottomTabNavigator();
 
@@ -72,6 +73,20 @@ const App = () => {
             ),
           }}
         />
+        <Tab.Screen
+          name="UserStudentNavigation"
+          component={UserStudentNavigation}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <IconButton
+                style={tw`bg-${focused ? 'red-300' : 'white'}`}
+                icon="account-supervisor-circle"
+                size={20}
+                iconColor='red'// Change icon color based on focus
+              />
+            ),
+          }}
+        />
 
       </Tab.Navigator>
     </NavigationContainer>
@@ -81,3 +96,23 @@ const App = () => {
 
 
 export default App;
+
+// import React from 'react';
+// import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+// import StudentList from './src/Screens/teacher/ClassView'; 
+
+// const App = () => {
+//   return (
+//     <SafeAreaView style={styles.container}>
+//       <StudentList teacherId="t5" />
+//     </SafeAreaView>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//   },
+// });
+
+// export default App;

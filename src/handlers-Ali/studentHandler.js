@@ -1,9 +1,8 @@
-const {firestore} = require('../firebase/firestore');
-const db = firestore;
+import firestore from '@react-native-firebase/firestore';
 
 const getAllStudents = async () => {
     const students = [];
-    const studentRef = db.collection('Student').orderBy('regNo');
+    const studentRef = firestore().collection('Student').orderBy('regNo');
     const snapshot = await studentRef.get();
     snapshot.forEach(doc => {
         students.push(doc.data());
@@ -12,7 +11,7 @@ const getAllStudents = async () => {
 };
 
 const getStudent = async (regNo) => {
-    const studentRef = db.collection('Student').doc(regNo);
+    const studentRef = firestore().collection('Student').doc(regNo);
     const doc = await studentRef.get();
     if (!doc.exists) {
         console.log('No such document!');
