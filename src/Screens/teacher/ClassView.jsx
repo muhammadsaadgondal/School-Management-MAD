@@ -6,12 +6,13 @@ import {
     Text,
     View,
     ImageBackground,
-    ActivityIndicator
+    ActivityIndicator,
+    TouchableOpacity
 } from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import { getTeacherStudents } from '../../handlers-Ali/teacherClassHandler';
 
-const StudentList = ({ teacherId }) => {
+const StudentList = ({ navigation, teacherId }) => {
     const [students, setStudents] = useState([]);
     const [className, setClassName] = useState('N/A');
     const [loading, setLoading] = useState(true);
@@ -63,17 +64,22 @@ const StudentList = ({ teacherId }) => {
                 </View>
                 <ScrollView contentContainerStyle={styles.scrollViewContent}>
                     {students.map((student, index) => (
-                        <Card key={index} style={styles.card}>
-                            <Card.Content style={styles.cardContent}>
-                                <Title style={styles.text}>{student.name}</Title>
-                                <Paragraph style={styles.text}>
-                                    Reg. #: {student.regNo}
-                                </Paragraph>
-                                <Paragraph>
-                                    Gender: {student.gender}
-                                </Paragraph>
-                            </Card.Content>
-                        </Card>
+                        <TouchableOpacity
+                            key={index}
+                            onPress={() => navigation.navigate('StudentMarks', { studentId: student.regNo, subjects: student.session.subjects})}
+                        >
+                            <Card style={styles.card}>
+                                <Card.Content style={styles.cardContent}>
+                                    <Title style={styles.text}>{student.name}</Title>
+                                    <Paragraph style={styles.text}>
+                                        Reg. #: {student.regNo}
+                                    </Paragraph>
+                                    <Paragraph>
+                                        Gender: {student.gender}
+                                    </Paragraph>
+                                </Card.Content>
+                            </Card>
+                        </TouchableOpacity>
                     ))}
                 </ScrollView>
             </ImageBackground>
