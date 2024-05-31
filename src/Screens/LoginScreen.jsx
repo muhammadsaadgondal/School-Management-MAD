@@ -10,10 +10,8 @@ import {
 import { RadioButton, TextInput, Button } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import { AuthContext } from '../auth/AuthContext';
-import { useNavigation } from '@react-navigation/native';
 
-export default function LoginScreen() {
-  const navigation = useNavigation();
+export default function LoginScreen({navigation}) {
   const [checked, setChecked] = useState('Admin');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -59,7 +57,7 @@ export default function LoginScreen() {
 
         // Navigate to the appropriate screen based on the actor
         if (actor === 'Admin') {
-          navigation.navigate('AdminDashboard');
+          navigation.navigate('HomeTabs');
         } else if (actor === 'Teacher') {
           navigation.navigate('TeacherScreen');
         } else if (actor === 'Student') {
