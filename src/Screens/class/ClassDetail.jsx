@@ -1,73 +1,20 @@
-import React, { useState } from 'react';
-import { View, Text, Image, ScrollView, Button, TouchableOpacity } from 'react-native';
-import { IconButton, Avatar, Portal, Modal, Provider as PaperProvider, Icon } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import { IconButton, Avatar, Portal, Provider as PaperProvider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-import {  launchImageLibrary } from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 import tw from 'twrnc';
 import { PieChart } from 'react-native-gifted-charts';
-
 import FancyTable from 'react-native-fancy-table';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
-import CustomImagePickerModal from '../../Components/CustomImagePickerModal';
 import { getClass } from './ProfileScreen';
-
-
-
-const uploadImageAndAddToFirestore = async (imageUri, imageName, classId) => {
-    console.log("Inside");
-    const storageReference = storage().ref(`images/${imageName}`);
-    const selectedClass = firestore().collection('Class').doc(classId);
-    console.log(`ClassRef got ${selectedClass}`);
-
-    try {
-        const uploadTask = storageReference.putFile(imageUri);
-
-        // This promise resolves when the upload is complete
-        await new Promise((resolve, reject) => {
-            uploadTask.on(
-                'state_changed',
-                taskSnapshot => {
-                    console.log(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`);
-                },
-                error => {
-                    console.error('Error during upload:', error);
-                    reject(error);
-                },
-                () => {
-                    console.log('Upload completed successfully');
-                    resolve();
-                }
-            );
-        });
-
-        // After the upload completes, get the download URL
-        const downloadUrl = await storageReference.getDownloadURL();
-        console.log('Image uploaded successfully! Download URL:', downloadUrl);
-
-        // Update Firestore document with image URL
-        await selectedClass.update({
-            syllabusUrl: downloadUrl,
-        });
-
-        console.log('Image URL added to Firestore document!');
-    } catch (error) {
-        console.error('Error uploading image and updating Firestore:', error);
-    }
-};
-
 
 const header = ["Name", "Reg No", "Date of Birth", "Gender"];
 
-const ClassDetail = ({ route,navigation }) => {
-
-    /* ClassDetail */
-    const { classInfo,  students, teacherInfo,reload } = route.params;
+const ClassDetail = ({ route, navigation }) => {
+    const { classInfo, students, teacherInfo } = route.params;
     const [detail, setDetail] = useState(classInfo);
-
-    // console.log(detail);
-    // console.log("===========================");
     const maleCount = students.filter(student => student.gender === 'male').length;
     const femaleCount = students.filter(student => student.gender === 'female').length;
 
@@ -78,46 +25,130 @@ const ClassDetail = ({ route,navigation }) => {
 
     const [isVisible, setVisible] = useState(false);
     const [syllabusImage, setSyllabusImage] = useState(null);
+    const [timetableImage, setTimetableImage] = useState(null);
     const [visibleP, setVisibleP] = useState(false);
+    const [isFullScreenImageVisible, setFullScreenImageVisible] = useState(false);
+    const [fullScreenImageUri, setFullScreenImageUri] = useState(null);
+
+    useEffect(() => {
+        const fetchImages = async () => {
+            try {
+                const classDoc = await firestore().collection('Class').doc(classInfo.id).get();
+                if (classDoc.exists) {
+                    const classData = classDoc.data();
+                    if (classData.syllabusUrl) {
+                        setSyllabusImage(classData.syllabusUrl);
+                    }
+                    if (classData.timetableUrl) {
+                        setTimetableImage(classData.timetableUrl);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching images:', error);
+            }
+        };
+
+        fetchImages();
+    }, [classInfo.id]);
 
     const showModal = () => setVisibleP(true);
     const hideModal = () => setVisibleP(false);
 
-    const pickImage = () => {
+    const pickImage = (type) => {
         setVisible(true); // Show the image picker modal
+        setImageType(type); // Set the type of image being picked
     };
 
-    const deleteImage = () => {
-        setSyllabusImage(null); // Clear the selected image
+    const deleteImage = (type) => {
+        if (type === 'syllabus') {
+            setSyllabusImage(null); // Clear the selected syllabus image
+        } else if (type === 'timetable') {
+            setTimetableImage(null); // Clear the selected timetable image
+        }
     };
 
-    const handleImageSelection = async () => {
-
+    const handleImageSelection = async (type) => {
         const options = {
             mediaType: 'photo',
             includeBase64: false,
-            maxHeight: 2000,
-            maxWidth: 2000,
+            maxHeight: 600,
+            maxWidth: 600,
         };
 
-        launchImageLibrary(options, (response) => {
+        launchImageLibrary(options, async (response) => {
             if (response.didCancel) {
                 console.log('User cancelled image picker');
-            } else if (response.error) {
-                console.log('Image picker error: ', response.error);
+            } else if (response.errorCode) {
+                console.log('Image picker error: ', response.errorCode);
             } else {
-                let imageUri = response.uri || response.assets?.[0]?.uri;
+                let imageUri = response.assets?.[0]?.uri;
                 console.log(imageUri);
-                setSyllabusImage(imageUri);
-                uploadImageAndAddToFirestore(imageUri, `syllabus_${detail.id}.jpg`, detail.id);
+
+                if (type === 'syllabus') {
+                    setSyllabusImage(imageUri);
+                } else if (type === 'timetable') {
+                    setTimetableImage(imageUri);
+                }
+
+                if (imageUri) {
+                    await uploadImage(imageUri, type);
+                }
             }
         });
+    };
 
+    const uploadImage = async (imageUri, type) => {
+        if (!imageUri) {
+            console.error('No image selected');
+            return '';
+        }
+
+        const originalFilename = imageUri.substring(imageUri.lastIndexOf('/') + 1);
+        const filename = `${classInfo.id}_${type}_${originalFilename}`;
+        console.log('Filename:', filename);
+        const storageRef = storage().ref(`images/${filename}`);
+
+        try {
+            // Upload the file to Firebase Storage
+            await storageRef.putFile(imageUri);
+
+            // Retrieve the download URL for the uploaded file
+            const url = await storageRef.getDownloadURL();
+            console.log('Download URL:', url);
+
+            // Update Firestore document with image URL
+            if (type === 'syllabus') {
+                await firestore().collection('Class').doc(classInfo.id).update({
+                    syllabusUrl: url,
+                });
+                setSyllabusImage(url);
+            } else if (type === 'timetable') {
+                await firestore().collection('Class').doc(classInfo.id).update({
+                    timetableUrl: url,
+                });
+                setTimetableImage(url);
+            }
+
+            return url;
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            return '';
+        }
+    };
+
+    const handleImageClick = (uri) => {
+        setFullScreenImageUri(uri);
+        setFullScreenImageVisible(true);
+    };
+
+    const handleFullScreenImageClose = () => {
+        setFullScreenImageVisible(false);
+        setFullScreenImageUri(null);
     };
 
     return (
         <SafeAreaView style={tw`h-full bg-indigo-100 p-4`}>
-            <ScrollView contentContainerStyle={tw`flex-grow `} showsVerticalScrollIndicator={false}  >
+            <ScrollView contentContainerStyle={tw`flex-grow`} showsVerticalScrollIndicator={false}>
                 <PaperProvider>
                     {/* Class Name */}
                     <View style={tw`mb-4`}>
@@ -133,7 +164,7 @@ const ClassDetail = ({ route,navigation }) => {
                                 style={tw`mr-4`}
                             />
                             <View style={tw`flex-1`}>
-                                <Text style={tw`text-lg font-bold`}>{teacherInfo?.name|| "No assigned" }</Text>
+                                <Text style={tw`text-lg font-bold`}>{teacherInfo?.name || "No assigned"}</Text>
                                 <Text>Teacher</Text>
                             </View>
                             <IconButton
@@ -144,6 +175,7 @@ const ClassDetail = ({ route,navigation }) => {
                             />
                         </View>
                     </View>
+
                     {/* Gender Ratio Chart */}
                     <View style={tw`bg-white p-4 rounded-lg shadow-lg mb-4 items-center`}>
                         <Text style={tw`text-xl font-bold mb-2`}>Gender Ratio</Text>
@@ -159,7 +191,7 @@ const ClassDetail = ({ route,navigation }) => {
                             innerRadius={50}
                             centerLabelComponent={() => {
                                 return (
-                                    <Text style={tw`font-bold `}>
+                                    <Text style={tw`font-bold`}>
                                         Male: {maleCount} {'\n'}
                                         Female: {femaleCount}
                                     </Text>
@@ -167,7 +199,6 @@ const ClassDetail = ({ route,navigation }) => {
                             }}
                         />
                     </View>
-
 
                     {/* Students Section */}
                     <View style={tw`bg-white p-4 rounded-lg shadow-lg mb-4`}>
@@ -180,7 +211,7 @@ const ClassDetail = ({ route,navigation }) => {
                                 bodyFontSize={13}
                                 bodyFontColor="black"
                                 header={header}
-                                tableBody={students.map(({ id, name, regNo, DoB, gender }) => [name, regNo, new Date(DoB).toLocaleDateString(), gender])}
+                                tableBody={students.map(({ name, regNo, DoB, gender }) => [name, regNo, new Date(DoB).toLocaleDateString(), gender])}
                                 rowWidth={4.8}
                                 borderColor={tw.color("indigo-400")}
                                 borderWidth={0.2}
@@ -188,9 +219,8 @@ const ClassDetail = ({ route,navigation }) => {
                             />
                         </View>
 
-
                         <Portal>
-                            <Modal visible={visibleP} onDismiss={hideModal} contentContainerStyle={tw` bg-white p-4 items-center justify-center max-h-230`}>
+                            <Modal visible={visibleP} onDismiss={hideModal} contentContainerStyle={tw`bg-white p-4 items-center justify-center max-h-230`}>
                                 <Text style={tw`text-xl font-bold mb-2 items-center justify-center`}>All Students</Text>
                                 <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                                     <FancyTable
@@ -200,7 +230,7 @@ const ClassDetail = ({ route,navigation }) => {
                                         bodyFontSize={13}
                                         bodyFontColor="black"
                                         header={header}
-                                        tableBody={students.map(({ id, name, regNo, DoB, gender }) => [name, regNo, new Date(DoB).toLocaleDateString(), gender])}
+                                        tableBody={students.map(({ name, regNo, DoB, gender }) => [name, regNo, new Date(DoB).toLocaleDateString(), gender])}
                                         rowWidth={5}
                                         borderColor={tw.color("indigo-400")}
                                         borderWidth={0.2}
@@ -214,6 +244,7 @@ const ClassDetail = ({ route,navigation }) => {
                             <Text style={tw`text-blue-600`}>Show more</Text>
                         </TouchableOpacity>
                     </View>
+
                     {/* Subjects */}
                     <View style={tw`bg-white p-4 rounded-lg shadow-lg mb-4`}>
                         <Text style={tw`text-xl font-bold mb-2`}>Subjects</Text>
@@ -231,45 +262,81 @@ const ClassDetail = ({ route,navigation }) => {
                         ))}
                     </View>
 
-
-
-
                     {/* Syllabus Upload Section */}
                     <View style={tw`bg-white p-4 rounded-lg shadow-lg mb-4`}>
                         <Text style={tw`text-xl font-bold mb-2`}>Syllabus</Text>
                         {syllabusImage ? (
                             <View style={tw`relative items-center justify-center`}>
-                                <Image
-                                    source={{ uri: syllabusImage }}
-                                    style={tw`w-80 h-50 rounded-lg`}
-                                />
+                                <TouchableOpacity onPress={() => handleImageClick(syllabusImage)}>
+                                    <Image
+                                        source={{ uri: syllabusImage }}
+                                        style={tw`w-80 h-50 rounded-lg`}
+                                    />
+                                </TouchableOpacity>
                                 <IconButton
                                     icon="close-circle"
                                     iconColor='white'
                                     size={25}
-                                    style={tw`absolute top--3 right--2  rounded-full`}
-                                    onPress={deleteImage}
+                                    style={tw`absolute top--3 right--2 rounded-full`}
+                                    onPress={() => deleteImage('syllabus')}
                                 />
-                                {/* <Icon source="close-circle" size={25} color="black" style={tw` relative top-10 bg-indigo-200 `} onPress={deleteImage} /> */}
                             </View>
                         ) : (
-                            <TouchableOpacity style={tw`bg-indigo-600 p-3 rounded-lg w-full`} onPress={handleImageSelection} >
+                            <TouchableOpacity style={tw`bg-indigo-600 p-3 rounded-lg w-full`} onPress={() => handleImageSelection('syllabus')}>
                                 <Text style={tw`text-white text-center`}>Upload Syllabus</Text>
                             </TouchableOpacity>
                         )}
+                    </View>
 
+                    {/* Timetable Upload Section */}
+                    <View style={tw`bg-white p-4 rounded-lg shadow-lg mb-4`}>
+                        <Text style={tw`text-xl font-bold mb-2`}>Timetable</Text>
+                        {timetableImage ? (
+                            <View style={tw`relative items-center justify-center`}>
+                                <TouchableOpacity onPress={() => handleImageClick(timetableImage)}>
+                                    <Image
+                                        source={{ uri: timetableImage }}
+                                        style={tw`w-80 h-50 rounded-lg`}
+                                    />
+                                </TouchableOpacity>
+                                <IconButton
+                                    icon="close-circle"
+                                    iconColor='white'
+                                    size={25}
+                                    style={tw`absolute top--3 right--2 rounded-full`}
+                                    onPress={() => deleteImage('timetable')}
+                                />
+                            </View>
+                        ) : (
+                            <TouchableOpacity style={tw`bg-indigo-600 p-3 rounded-lg w-full`} onPress={() => handleImageSelection('timetable')}>
+                                <Text style={tw`text-white text-center`}>Upload Timetable</Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
 
                     {/* Manage Class Button */}
                     <View style={tw`relative bottom-0 left-0 right-0 p-4`}>
                         <TouchableOpacity
                             style={tw`bg-indigo-600 p-3 rounded-lg w-full`}
-                            onPress={() => navigation.navigate('RegisterScreen', { classInfo: detail, teacherInfo, students})}
+                            onPress={() => navigation.navigate('RegisterScreen', { classInfo: detail, teacherInfo, students })}
                         >
                             <Text style={tw`text-white text-center`}>Update Classroom</Text>
                         </TouchableOpacity>
                     </View>
 
+                    {/* Full Screen Image Modal */}
+                    <Modal visible={isFullScreenImageVisible} transparent={true} onRequestClose={handleFullScreenImageClose}>
+                        <View style={tw`flex-1 justify-center items-center bg-black bg-opacity-75`}>
+                            <Image
+                                source={{ uri: fullScreenImageUri }}
+                                style={tw`w-11/12 h-5/6 rounded-lg`}
+                                resizeMode="contain"
+                            />
+                            <TouchableOpacity style={tw`absolute top-4 right-4`} onPress={handleFullScreenImageClose}>
+                                <Text style={tw`text-white text-lg`}>Close</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </Modal>
                 </PaperProvider>
             </ScrollView>
         </SafeAreaView>
