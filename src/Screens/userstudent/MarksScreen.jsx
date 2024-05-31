@@ -1,42 +1,50 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import { AuthContext } from '../../auth/AuthContext';
+
 
 const MarksScreen = () => {
-  const [marks, setMarks] = useState([]);
+  // const [marks, setMarks] = useState([]);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    const fetchMarks = async () => {
-      try {
-        const marksSnapshot = await firestore().collection('Student').get();
-        const marksData = marksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setMarks(marksData);
-      } catch (error) {
-        console.error('Error fetching marks:', error.message);
-      }
-    };
+    console.log('User:', user);
+  }, [user]);
 
-    fetchMarks();
-  }, []);
+  // useEffect(() => {
+  //   const fetchMarks = async () => {
+  //     try {
+  //       const marksSnapshot = await firestore().collection('Student').get();
+  //       const marksData = marksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  //       setMarks(marksData);
+  //     } catch (error) {
+  //       console.error('Error fetching marks:', error.message);
+  //     }
+  //   };
+
+  //   fetchMarks();
+  // }, []);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Marks Screen</Text>
-      <FlatList
-        data={marks}
-        renderItem={({ item }) => (
-          <View>
-            <Text style={styles.studentName}>{item.name}</Text>
-            {item.session && item.session.subjects && item.session.subjects.map((subject, index) => (
-              <Text key={index} style={styles.subject}>
-                {subject.name}: MidTerm: {subject.midTerm}, FirstTerm: {subject.firstTerm}, FinalTerm: {subject.finalTerm}
-              </Text>
-            ))}
-          </View>
-        )}
-        keyExtractor={(item) => item.id}
-      />
+      <View>
+        <Text style={styles.studentName}>{user.data.name}</Text>
+        {user.data.session &&
+          user.data.session.map((session, sessionIndex) => (
+            <View key={sessionIndex}>
+              {session.subjects &&
+                session.subjects.map((subject, index) => (
+                  <Text key={`${subject.name}`} style={styles.subject}>
+                    {subject.name}: MidTerm: {subject.midTerm}, FirstTerm: {subject.firstTerm}, FinalTerm: {subject.finalTerm}
+                  </Text>
+                ))}
+            </View>
+          ))}
+      </View>
     </View>
+
   );
 };
 
