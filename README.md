@@ -89,3 +89,168 @@ A React Native CLI and Firebase project designed to manage school operations eff
 2. **View Fee Status and Timetable:**
    - Go to the "Fee Status" section to check fee details.
    - Visit the "Timetable" section to view class schedules and syllabus.
+
+### Databse Schema
+student:{
+	regNo: number(1-1000),
+	name: string,
+	DoA: Date,
+	DoB: Date,
+	gender: binary,
+	father: {
+		name: string,
+		occupation: string,
+		caste: string,
+		residency: string
+	},
+	loginCred:{
+		regNo: string,
+		password: string
+	},
+	remarks: [{ objectID }],
+	fee:[{ objectID }],
+	session:[{
+		year: string,
+		class: objectID,
+		subjects: [{
+			name: string,
+			firstTerm: number(max 50),
+			midTerm: number(max 50),
+			finalTerm: number(max 100)
+		}],
+		status: string, #[pass, fail, ongoing]
+	}]
+},
+
+remarks:{
+	id:	objectID,
+	date: date,
+	comment: string
+},
+
+fee:{
+	id: objectID,
+	datePosted: date,
+	dueDate: date,
+	submissionDate: date,
+	totalDues: number,
+	paidAmount: number,
+	`payableAmount: number`,
+	status: binary,
+	comment: string
+},
+
+teacher:{
+	tid: string, #CNIC no
+	name: string,
+	gender: binary,
+	loginCred:{
+		email: string,
+		password: string,
+	},
+	DoB: date,
+	DoJ: date,
+	pay: number,
+	assigned: binary
+}
+
+
+class:{					Done
+	id: number, #0,1,...,9
+	tid: objectID,
+	subject:[string],
+	schedule: Image,
+	syllabus: Image
+},
+
+
+
+Notification:{
+	classId:String,
+	datePosted:String,
+	message:String,
+	title:String,
+	visibleTill:String
+}student:{
+	regNo: number(1-1000),
+	name: string,
+	DoA: Date,
+	DoB: Date,
+	gender: binary,
+	father: {
+		name: string,
+		occupation: string,
+		caste: string,
+		residency: string
+	},
+	loginCred:{
+		regNo: string,
+		password: string
+	},
+	remarks: [{ objectID }],
+	fee:[{ objectID }],
+	session:[{
+		year: string,
+		class: objectID,
+		subjects: [{
+			name: string,
+			firstTerm: number(max 50),
+			midTerm: number(max 50),
+			finalTerm: number(max 100)
+		}],
+		status: string, #[pass, fail, ongoing]
+	}]
+},
+
+remarks:{
+	id:	objectID,
+	date: date,
+	comment: string
+},
+
+fee:{
+	id: objectID,
+	datePosted: date,
+	dueDate: date,
+	submissionDate: date,
+	totalDues: number,
+	paidAmount: number,
+	`payableAmount: number`,
+	status: binary,
+	comment: string
+},
+
+teacher:{
+	tid: string, #CNIC no
+	name: string,
+	gender: binary,
+	loginCred:{
+		email: string,
+		password: string,
+	},
+	DoB: date,
+	DoJ: date,
+	pay: number,
+	assigned: binary
+}
+
+
+class:{					Done
+	id: number, #0,1,...,9
+	tid: objectID,
+	subject:[string],
+	schedule: Image,
+	syllabus: Image
+},
+
+
+
+Notification:{
+	classId:String,
+	datePosted:String,
+	message:String,
+	title:String,
+	visibleTill:String
+}
+
+
